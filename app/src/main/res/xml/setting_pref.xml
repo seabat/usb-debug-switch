@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:key="pref_setting_overlay"
+        android:title="@string/title_setting_overlay"
+        android:summary="@string/summary_setting_overlay"
+        android:entries="@array/pref_setting_overlay_entries"
+        android:entryValues="@array/pref_setting_overlay_values"
+        android:defaultValue="@string/setting_overlay_off"/>
+
+    <Preference
+        android:key="pref_setting_usb_debug"
+        android:title="@string/title_setting_usb_debug"
+        android:summary="@string/summary_setting_usb_debug" />
+
+    <CheckBoxPreference
+        android:key="pref_enable_receive_boot_complete"
+        android:title="@string/title_enable_receive_boot_complete"
+        android:summary="@string/summary_enable_receive_boot_complete" />
+
+    <PreferenceCategory
+            android:title="@string/title_icon_position"
+            android:key="pref_icon_position">
+
+        <ListPreference
+                android:key="pref_vertical_axis"
+                android:title="@string/vertical_axis"
+                android:dialogTitle="@string/vertical_axis"
+                android:entries="@array/pref_vertical_axis_entries"
+                android:entryValues="@array/pref_vertical_axis_values"
+                android:defaultValue="@string/pref_vertical_axis_default"/>
+
+        <ListPreference
+                android:key="pref_horizontal_axis"
+                android:title="@string/horizontal_axis"
+                android:dialogTitle="@string/vertical_axis"
+                android:entries="@array/pref_horizontal_axis_entries"
+                android:entryValues="@array/pref_horizontal_axis_values"
+                android:defaultValue="@string/pref_horizontal_axis_default"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
