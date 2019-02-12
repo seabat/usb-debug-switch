@@ -11,6 +11,7 @@ import android.os.IBinder
 import android.support.annotation.RequiresApi
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.MainFragment.Companion.ACTION_SWITCH_OVERLAY_STATUS
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.MainFragment.Companion.KEY_OVERLAY_STATUS
+import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.ServiceStatusChecker
 
 class OverlayService() : Service() {
 
@@ -57,6 +58,17 @@ class OverlayService() : Service() {
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (ServiceStatusChecker.isServiceRunningInForeground(
+                getBaseContext(),
+                "OverlayService"))
+        {
+            // 既に サービスがフォアグラウンドの場合は、startForground() をコールしない。
+            // startForground() のコール自体は何回コールしても問題ないが、
+            // notification への通知がその度に発生するのでUI的にうざいので、
+            // 通知はフォアグラウンドに移行する際の一回でよい。
+            return START_NOT_STICKY;
+        }
+
         overlay()
 
         doStartForeground()
