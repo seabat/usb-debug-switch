@@ -14,9 +14,11 @@
         android:summary="@string/summary_setting_usb_debug" />
 
     <CheckBoxPreference
+        android:enabled="false"
         android:key="pref_enable_receive_boot_complete"
         android:title="@string/title_enable_receive_boot_complete"
-        android:summary="@string/summary_enable_receive_boot_complete" />
+        android:summary="@string/summary_enable_receive_boot_complete"
+        android:defaultValue="true"/>
 
     <PreferenceCategory
             android:title="@string/title_icon_position"

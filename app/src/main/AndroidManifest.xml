@@ -14,8 +14,8 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <receiver
-                android:name=".BootReceiver"
-                android:enabled="false"
+                android:name=".BootCompleteReceiver"
+                android:enabled="true"
                 android:exported="false"
                 android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
             <intent-filter>

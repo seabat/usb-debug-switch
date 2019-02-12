@@ -17,9 +17,8 @@ import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.OverlayService.Companion.ACTION_SWITCH_USB_DEBUG_STATUS
+import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.OverlayPermissionChecker
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.UsbDebugStatusChecker
-import java.lang.IllegalStateException
-
 
 class MainFragment : PreferenceFragmentCompat() {
 
@@ -112,13 +111,7 @@ class MainFragment : PreferenceFragmentCompat() {
      * OFFの場合はオーバーレイ許可を尋ねるダイアログを表示する。
      */
     private fun isEnabledOverlayPermission(): Boolean {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return true
-        }
-
-        //AndroidManifest.xml に android.permission.SYSTEM_ALERT_WINDOW を追加する必要あり
-
-        if (Settings.canDrawOverlays(activity)) {
+        if(OverlayPermissionChecker.isEnabled(context!!)) {
             return true
         }
 
@@ -200,9 +193,10 @@ class MainFragment : PreferenceFragmentCompat() {
 
 
     private fun setUpAutoBoot() {
-        //自動起動設定を CheckBoxPreference に反映
-        val usbDebugPref = findPreference("pref_enable_receive_boot_complete") as CheckBoxPreference
-        if(DEBUG) Log.d(TAG, "USB Debug = ${usbDebugPref.isChecked}")
+        //TODO: サービス自動起動のON/OFF
+//        //自動起動設定を CheckBoxPreference に反映
+//        val usbDebugPref = findPreference("pref_enable_receive_boot_complete") as CheckBoxPreference
+//        if(DEBUG) Log.d(TAG, "USB Debug = ${usbDebugPref.isChecked}")
     }
 
 
@@ -237,7 +231,8 @@ class MainFragment : PreferenceFragmentCompat() {
                 }
                 "pref_enable_receive_boot_complete" -> {
                     sharedPreferences.getBoolean(key, false).let {
-                        setUpEnabledReceiver(it)
+                        //TODO: サービス自動起動のON/OFF
+//                        BootReceiverSwitch.switch(context!!.applicationContext,it)
                     }
                 }
                 "pref_vertical_axis" -> {
@@ -323,17 +318,6 @@ class MainFragment : PreferenceFragmentCompat() {
         super.onDestroy()
     }
 
-
-    private fun setUpEnabledReceiver(enabled: Boolean) {
-        var pkgName = activity?.applicationContext?.packageName
-        var pkgInfo = activity?.packageManager?.getPackageInfo(pkgName, PackageManager.GET_RECEIVERS)
-        var receiverArray: ArrayList<Array<ActivityInfo>?> = arrayListOf(pkgInfo?.receivers)
-        for ( receiver in receiverArray) {
-            if (receiver?.get(0)?.name == "usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.BootReceiver") {
-                receiver?.get(0)?.enabled = enabled
-            }
-        }
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
