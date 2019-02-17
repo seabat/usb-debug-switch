@@ -22,9 +22,9 @@ class OverlayService() : Service() {
     }
 
 
-    // fields
+    // properties
 
-//    private lateinit var mOverlay: OverlayView
+    private var mOverlay: OverlayView? =  null
 
     private lateinit var mReceiver: BroadcastReceiver
 
@@ -32,19 +32,14 @@ class OverlayService() : Service() {
 
     override fun onCreate() {
         super.onCreate()
-//        mOverlay = OverlayView(this)
         setUpUsbDebugStatusReceiver()
     }
 
     private fun setUpUsbDebugStatusReceiver() {
         mReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                context?.let {_contex ->
-                    OverlayView.newInstance(_contex)?.let { overlayView ->
-                        overlayView.resetImage("")}
-                }
+                mOverlay?.resetImage("")}
             }
-        }
 
         IntentFilter().let {
             it.addAction(ACTION_SWITCH_USB_DEBUG_STATUS)
@@ -78,8 +73,9 @@ class OverlayService() : Service() {
 
 
     private fun overlay() {
-        OverlayView.newInstance(this)?.let { overlayView ->
-            overlayView.display( object : OnSwitchUsbDebuggerListener {
+        mOverlay?:run{
+            mOverlay = OverlayView(this)
+            mOverlay?.display( object : OnSwitchUsbDebuggerListener {
                 override fun onSwitch() {
                     Intent(baseContext, MainActivity::class.java).let {
                         it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -171,7 +167,8 @@ class OverlayService() : Service() {
 
 
     override fun onDestroy() {
-        OverlayView.destroyInstance()
+        mOverlay?.remove()
+        mOverlay = null
 
         doStopForeground()
 

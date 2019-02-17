@@ -7,6 +7,7 @@ import android.os.Handler
 import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.UsbDebugStatusChecker
@@ -22,22 +23,7 @@ class OverlayView(var mContext: Context) {
 
     companion object {
         val TAG = "OverlayView"
-
         private var mOverlayView: OverlayView? = null
-
-        fun newInstance(context: Context): OverlayView? {
-            if (mOverlayView == null)  {
-                mOverlayView = OverlayView(context)
-            }
-            return mOverlayView
-        }
-
-        fun destroyInstance() {
-            if (mOverlayView != null) {
-                mOverlayView?.remove()
-                mOverlayView == null
-            }
-        }
     }
 
     // methods
@@ -62,7 +48,7 @@ class OverlayView(var mContext: Context) {
           // 重ね合わせするViewの設定を行う
 
         (mContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager).let { windowManager ->
-            windowManager.addView(mView, params)
+            windowManager.addView(mView, params as ViewGroup.LayoutParams?)
               // Viewを画面上に重ね合わせする
         }
     }
