@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">UsbDebugSwitch</string>
+    <string name="app_name">USB Debug Switch</string>
     <string name="dialog_msg_goto_overlay_setting">本アプリを使用するには他のアプリの上に本アプリがオーバーレイすることを許可してください。</string>
 
     <!-- TODO: Remove or change this placeholder text -->
