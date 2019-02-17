@@ -179,9 +179,19 @@ class MainFragment : PreferenceFragmentCompat() {
                 override fun onPreferenceClick(p: Preference?): Boolean {
                     val key =  p?.key
                     if (key == "pref_setting_usb_debug") {
-                        Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS).let {
-                            // 設定画面を起動する
-                            startActivityForResult(it, MainFragment.REQUEST_APPLICATION_DEVELOPMENT_SETTINGS)
+                        // 設定画面を起動する
+                        try {
+                            Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS).let {intent ->
+                                startActivityForResult(intent, MainFragment.REQUEST_APPLICATION_DEVELOPMENT_SETTINGS)
+                            }
+                        } catch (e: ActivityNotFoundException) {
+                            Intent().let {intent ->
+                                intent.setComponent(ComponentName(
+                                    "com.android.settings",
+                                    "com.android.settings.DevelopmentSettings"))
+                                intent.setAction("android.intent.action.View")
+                                startActivityForResult(intent, MainFragment.REQUEST_APPLICATION_DEVELOPMENT_SETTINGS)
+                            }
                         }
                         return true
                     }
