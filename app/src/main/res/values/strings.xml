@@ -15,12 +15,12 @@
     <string name="noti_channel_overlay">Overlay</string>
     <string name="notification_overlay_title">Now overlaying</string>
 
-    <string name="title_setting_usb_debug">USBデバッグ設定</string>
+    <string name="title_setting_usb_debug">USBデバッグ</string>
     <string name="setting_usb_debug_on">ON</string>
     <string name="setting_usb_debug_off">OFF</string>
     <string name="summary_setting_usb_debug">@string/setting_usb_debug_off</string>
 
-    <string name="title_setting_overlay">オーバーレイ</string>
+    <string name="title_setting_overlay">画面オーバーレイ</string>
     <string name="setting_overlay_on">ON</string>
     <string name="setting_overlay_off">OFF</string>
     <string name="summary_setting_overlay">@string/setting_overlay_off</string>
