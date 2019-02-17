@@ -17,8 +17,6 @@ class OverlayView(var mContext: Context) {
 
     private var mView: View? = null
 
-    private var wm: WindowManager? = null
-
     private var mListener: OverlayService.OnSwitchUsbDebuggerListener? = null
 
 
@@ -62,10 +60,11 @@ class OverlayView(var mContext: Context) {
 
         val params = createLayoutParams()
           // 重ね合わせするViewの設定を行う
-        wm = mContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-          // WindowManagerを取得する
-        wm!!.addView(mView, params)
-          // Viewを画面上に重ね合わせする
+
+        (mContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager).let { windowManager ->
+            windowManager.addView(mView, params)
+              // Viewを画面上に重ね合わせする
+        }
     }
 
     private fun setupImage(imageView: ImageView) {
@@ -141,7 +140,9 @@ class OverlayView(var mContext: Context) {
 
     fun remove() {
         // サービスが破棄されるときには重ね合わせしていたViewを削除する
-        wm?.removeView(mView)
+        (mContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager).let { windowManager ->
+            windowManager.removeView(mView)
+        }
         mView = null
     }
 }
