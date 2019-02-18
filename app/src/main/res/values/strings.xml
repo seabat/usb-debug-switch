@@ -6,7 +6,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_enable_receive_boot_complete">自動起動</string>
     <string name="summary_enable_receive_boot_complete">端末起動時に本アプリを起動する</string>
-    <string name="title_icon_position">アイコン位置</string>
+    <string name="title_icon_position">オーバーレイアイコンの位置</string>
     <string name="vertical_axis">縦軸</string>
     <string name="pref_vertical_axis_default">BOTTOM</string>
     <string name="horizontal_axis">横軸</string>
