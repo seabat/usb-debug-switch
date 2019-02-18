@@ -7,15 +7,20 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
 import android.support.annotation.RequiresApi
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.MainFragment.Companion.ACTION_SWITCH_OVERLAY_STATUS
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.MainFragment.Companion.KEY_OVERLAY_STATUS
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.ServiceStatusChecker
+import android.support.v4.os.HandlerCompat.postDelayed
+import android.util.Log
+
 
 class OverlayService() : Service() {
 
     companion object {
+        const val TAG = "OverlayService"
         const val CHANNEL_ID = "OverlayserviceChannel"
         const val NOTIFICATION_ID = 2
         const val ACTION_SWITCH_USB_DEBUG_STATUS = "ACTION_SWITCH_USB_DEBUG_STATUS"
@@ -24,6 +29,8 @@ class OverlayService() : Service() {
 
     // properties
 
+    private val mHandler = Handler()
+    private var mRunnable: Runnable? = null
     private var mOverlay: OverlayView? =  null
 
     private lateinit var mReceiver: BroadcastReceiver
@@ -83,7 +90,28 @@ class OverlayService() : Service() {
                     }
                 }
             })
+            setUpDebugStatusTimer()
         }
+    }
+
+
+    private fun setUpDebugStatusTimer() {
+        // 定期実行 Runnable が有効の場合はキャンセルする
+        mRunnable?.run {
+            mHandler.removeCallbacks(mRunnable)
+            mRunnable = null
+        }
+
+        // 定期実行 Runnable 生成する
+        mRunnable = object : Runnable {
+            override fun run() {
+                // UIスレッド
+                mOverlay?.resetImage("")
+                mHandler.postDelayed(this, 3000)
+            }
+        }
+
+        mHandler.post(mRunnable)
     }
 
 
@@ -167,18 +195,30 @@ class OverlayService() : Service() {
 
 
     override fun onDestroy() {
-        mOverlay?.remove()
-        mOverlay = null
+        // オーバーレイを finalize
+        mOverlay?.run{
+            remove()
+            mOverlay = null
+        }
 
+        // サービスを停止
         doStopForeground()
 
+        // Activity にオーバーレイOFFを通知する
         Intent().let {
             it.action = ACTION_SWITCH_OVERLAY_STATUS
             it.putExtra(KEY_OVERLAY_STATUS,false)
             this.sendBroadcast(it)
         }
 
+        // ブロードキャストレシーバーの finalize
         finalizeReceiver()
+
+        // タイマーを finalize
+        mRunnable?.run{
+            mHandler.removeCallbacks(mRunnable)
+            mRunnable = null
+        }
 
         super.onDestroy()
     }
