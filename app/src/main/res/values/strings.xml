@@ -10,7 +10,7 @@
     <string name="vertical_axis">縦軸</string>
     <string name="pref_vertical_axis_default">BOTTOM</string>
     <string name="horizontal_axis">横軸</string>
-    <string name="pref_horizontal_axis_default">CENTER</string>
+    <string name="pref_horizontal_axis_default">RIGHT</string>
 
     <string name="noti_channel_overlay">Overlay</string>
     <string name="notification_overlay_title">Now overlaying</string>
