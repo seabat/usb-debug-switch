@@ -43,17 +43,18 @@ class MainFragment : PreferenceFragmentCompat() {
 
           // Load the appinfo_preferences from an XML resource
         addPreferencesFromResource(R.xml.setting_pref)
-        val sharedPref = PreferenceManager.getDefaultSharedPreferences(activity)
+        activity?.let {
+            val sharedPref = PreferenceManager.getDefaultSharedPreferences(activity)
+            setUpOverlay(sharedPref)
 
-        setUpOverlay(sharedPref)
+            setUpUsbDebug()
 
-        setUpUsbDebug()
+            setUpAutoBoot()
 
-        setUpAutoBoot()
+            setUpPosition(sharedPref)
 
-        setUpPosition(sharedPref)
-
-        setUpChangePrefListener()
+            setUpChangePrefListener()
+        }
     }
 
 

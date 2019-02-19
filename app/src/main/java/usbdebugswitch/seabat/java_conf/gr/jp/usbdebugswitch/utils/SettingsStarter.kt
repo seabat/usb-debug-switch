@@ -43,9 +43,10 @@ object SettingsStarter {
         }
     }
 
-    fun start(context: Context) {
+    fun startOutsideOfActivity(context: Context) {
         try {
             Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS).let { intent ->
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 context.startActivity(intent)
             }
         } catch (e: ActivityNotFoundException) {
@@ -56,6 +57,7 @@ object SettingsStarter {
                         "com.android.settings.DevelopmentSettings")
                 )
                 intent.setAction("android.intent.action.View")
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 context.startActivity(intent)
             }
         }

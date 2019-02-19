@@ -87,7 +87,7 @@ class OverlayService() : Service() {
 //                        it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 //                        startActivity(it)
 //                    }
-                    SettingsStarter.start(baseContext)
+                    SettingsStarter.startOutsideOfActivity(baseContext)
                 }
             })
             setUpDebugStatusTimer()
