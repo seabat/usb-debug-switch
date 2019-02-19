@@ -2,10 +2,7 @@ package usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch
 
 import android.annotation.TargetApi
 import android.content.*
-import android.content.pm.ActivityInfo
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.v7.preference.CheckBoxPreference
 import android.support.v7.preference.ListPreference
 import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceFragmentCompat
@@ -14,9 +11,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.os.Build
-import android.provider.Settings
 import android.util.Log
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.OverlayService.Companion.ACTION_SWITCH_USB_DEBUG_STATUS
+import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.SettingsStarter
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.OverlayPermissionChecker
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.UsbDebugStatusChecker
 
@@ -179,20 +176,8 @@ class MainFragment : PreferenceFragmentCompat() {
                 override fun onPreferenceClick(p: Preference?): Boolean {
                     val key =  p?.key
                     if (key == "pref_setting_usb_debug") {
-                        // 設定画面を起動する
-                        try {
-                            Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS).let {intent ->
-                                startActivityForResult(intent, MainFragment.REQUEST_APPLICATION_DEVELOPMENT_SETTINGS)
-                            }
-                        } catch (e: ActivityNotFoundException) {
-                            Intent().let {intent ->
-                                intent.setComponent(ComponentName(
-                                    "com.android.settings",
-                                    "com.android.settings.DevelopmentSettings"))
-                                intent.setAction("android.intent.action.View")
-                                startActivityForResult(intent, MainFragment.REQUEST_APPLICATION_DEVELOPMENT_SETTINGS)
-                            }
-                        }
+                        SettingsStarter.startForResultFromFragment(this@MainFragment)
+                          // 設定画面を起動する
                         return true
                     }
                     return false

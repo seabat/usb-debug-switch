@@ -13,8 +13,7 @@ import android.support.annotation.RequiresApi
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.MainFragment.Companion.ACTION_SWITCH_OVERLAY_STATUS
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.MainFragment.Companion.KEY_OVERLAY_STATUS
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.ServiceStatusChecker
-import android.support.v4.os.HandlerCompat.postDelayed
-import android.util.Log
+import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.SettingsStarter
 
 
 class OverlayService() : Service() {
@@ -84,10 +83,11 @@ class OverlayService() : Service() {
             mOverlay = OverlayView(this)
             mOverlay?.display( object : OnSwitchUsbDebuggerListener {
                 override fun onSwitch() {
-                    Intent(baseContext, MainActivity::class.java).let {
-                        it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        startActivity(it)
-                    }
+//                    Intent(baseContext, MainActivity::class.java).let {
+//                        it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+//                        startActivity(it)
+//                    }
+                    SettingsStarter.start(baseContext)
                 }
             })
             setUpDebugStatusTimer()
