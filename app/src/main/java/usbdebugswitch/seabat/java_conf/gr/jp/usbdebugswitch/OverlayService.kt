@@ -9,7 +9,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
-import android.support.annotation.RequiresApi
+import androidx.annotation.RequiresApi
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.MainFragment.Companion.ACTION_SWITCH_OVERLAY_STATUS
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.MainFragment.Companion.KEY_OVERLAY_STATUS
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.ServiceStatusChecker
@@ -98,7 +98,7 @@ class OverlayService() : Service() {
     private fun setUpDebugStatusTimer() {
         // 定期実行 Runnable が有効の場合はキャンセルする
         mRunnable?.run {
-            mHandler.removeCallbacks(mRunnable)
+            mHandler.removeCallbacks(mRunnable!!)
             mRunnable = null
         }
 
@@ -111,7 +111,7 @@ class OverlayService() : Service() {
             }
         }
 
-        mHandler.post(mRunnable)
+        mHandler.post(mRunnable as Runnable)
     }
 
 
@@ -216,7 +216,7 @@ class OverlayService() : Service() {
 
         // タイマーを finalize
         mRunnable?.run{
-            mHandler.removeCallbacks(mRunnable)
+            mHandler.removeCallbacks(mRunnable!!)
             mRunnable = null
         }
 

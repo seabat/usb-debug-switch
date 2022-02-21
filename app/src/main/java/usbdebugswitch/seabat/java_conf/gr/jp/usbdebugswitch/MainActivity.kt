@@ -3,11 +3,12 @@ package usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentTransaction
 
 
 class MainActivity : AppCompatActivity(), MessageDialogFragment.OnClickListener{
@@ -36,7 +37,7 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.OnClickListener{
 
         if (fm.findFragmentById(R.id.main_frame_layout) == null) {
             val fragment = MainFragment()
-            fm.beginTransaction().add(R.id.main_frame_layout, fragment).commit()
+            fm.beginTransaction().replace(R.id.main_frame_layout, fragment)
         }
     }
 
@@ -74,7 +75,7 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.OnClickListener{
         // 設定画面を起動する
         // 設定->アプリ->歯車アイコン->他のアプリの上に重ねて表示
 
-        startActivityForResult(intent, MainActivity.REQUEST_OVERLAY_PERMISSION)
+        startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION)
     }
 
 

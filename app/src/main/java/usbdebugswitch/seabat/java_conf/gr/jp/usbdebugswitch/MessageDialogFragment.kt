@@ -1,16 +1,12 @@
 package usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
-import android.app.FragmentBreadCrumbs
 import android.content.DialogInterface
-import android.content.Intent
-import android.net.Uri
-import android.support.v4.app.DialogFragment
 
 import android.os.Bundle
 import android.provider.Settings
+import androidx.fragment.app.DialogFragment
 
 class MessageDialogFragment : DialogFragment() {
 

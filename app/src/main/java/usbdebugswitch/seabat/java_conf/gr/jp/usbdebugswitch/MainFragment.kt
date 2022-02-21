@@ -3,15 +3,15 @@ package usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch
 import android.annotation.TargetApi
 import android.content.*
 import android.os.Bundle
-import android.support.v7.preference.ListPreference
-import android.support.v7.preference.Preference
-import android.support.v7.preference.PreferenceFragmentCompat
-import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.os.Build
 import android.util.Log
+import androidx.preference.ListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.OverlayService.Companion.ACTION_SWITCH_USB_DEBUG_STATUS
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.SettingsStarter
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.OverlayPermissionChecker
@@ -109,13 +109,13 @@ class MainFragment : PreferenceFragmentCompat() {
      * OFFの場合はオーバーレイ許可を尋ねるダイアログを表示する。
      */
     private fun isEnabledOverlayPermission(): Boolean {
-        if(OverlayPermissionChecker.isEnabled(context!!)) {
+        if(OverlayPermissionChecker.isEnabled(requireContext())) {
             return true
         }
 
         // オーバーレイ権限がない場合、ダイアログを表示
         MessageDialogFragment.newInstance(GOTO_OVERLAY_SETTING?:"")
-            .show(activity!!.supportFragmentManager, MainActivity.TAG_GOTO_OVERLAY_SETTING)
+            .show(requireActivity().supportFragmentManager, MainActivity.TAG_GOTO_OVERLAY_SETTING)
 
         return false
     }
@@ -167,7 +167,7 @@ class MainFragment : PreferenceFragmentCompat() {
         //USBデバッグ設定を Preference に反映
         findPreference("pref_setting_usb_debug").let {usbDebugStatus ->
             usbDebugStatus.summary =
-                    if (UsbDebugStatusChecker.isUsbDebugEnabled(activity!!)) {
+                    if (UsbDebugStatusChecker.isUsbDebugEnabled(requireActivity())) {
                         USB_DEBUG_ON
                     } else {
                         USB_DEBUG_OFF

@@ -3,7 +3,7 @@ package usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils
 import android.app.Activity
 import android.content.*
 import android.provider.Settings
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.MainFragment
 
 object SettingsStarter {

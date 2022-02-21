@@ -101,12 +101,12 @@ class OverlayView(var mContext: Context) {
             sharedPref.getString(
                 "pref_vertical_axis",
                 mContext.resources.getString(R.string.pref_vertical_axis_default)
-            )
+            )!!
         ) or OverlayPositionPreferenceConverter.convertPrefValueToViewValue(
             sharedPref.getString(
                 "pref_horizontal_axis",
                 mContext.resources.getString(R.string.pref_horizontal_axis_default)
-            )
+            )!!
         )
         // ex. Gravity.CENTER | Gravity.TOP;
 
