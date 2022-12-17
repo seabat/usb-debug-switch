@@ -190,7 +190,10 @@ class OverlayService() : Service() {
     private fun createPendingIntent(): PendingIntent {
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        return PendingIntent.getActivities(this, 0, arrayOf(intent), PendingIntent.FLAG_UPDATE_CURRENT)
+        return PendingIntent.getActivities(this,
+            0,
+            arrayOf(intent),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     }
 
 
