@@ -114,7 +114,7 @@ class MainFragment : PreferenceFragmentCompat() {
         }
 
         // オーバーレイ権限がない場合、ダイアログを表示
-        MessageDialogFragment.newInstance(GOTO_OVERLAY_SETTING?:"")
+        MessageDialogFragment.newInstance(GOTO_OVERLAY_SETTING)
             .show(requireActivity().supportFragmentManager, MainActivity.TAG_GOTO_OVERLAY_SETTING)
 
         return false

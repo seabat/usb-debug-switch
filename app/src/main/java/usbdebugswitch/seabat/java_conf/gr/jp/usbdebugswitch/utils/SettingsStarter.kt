@@ -17,7 +17,8 @@ object SettingsStarter {
 
     fun <T> startForResult(t: T) {
         try {
-            Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS).let { intent ->
+            Intent().let { intent ->
+                intent.action = Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS
                 if (t is Fragment) {
                     t.startActivityForResult(intent, MainFragment.REQUEST_APPLICATION_DEVELOPMENT_SETTINGS)
                 } else if (t is Activity) {

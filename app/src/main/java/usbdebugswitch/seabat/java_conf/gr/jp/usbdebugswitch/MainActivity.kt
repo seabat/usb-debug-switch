@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.OnClickListener{
 
         if (fm.findFragmentById(R.id.main_frame_layout) == null) {
             val fragment = MainFragment()
-            fm.beginTransaction().replace(R.id.main_frame_layout, fragment)
+            fm.beginTransaction().replace(R.id.main_frame_layout, fragment).commit()
         }
     }
 
@@ -96,6 +96,7 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.OnClickListener{
                             "Success to ACTION_MANAGE_OVERLAY_PERMISSION Permission",
                             Toast.LENGTH_SHORT
                         ).show()
+                        (supportFragmentManager.findFragmentById(R.id.main_frame_layout) as MainFragment).tryToStartOverlayService()
                     } else {
                         Toast.makeText(
                             this@MainActivity,
@@ -103,8 +104,6 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.OnClickListener{
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-
-                (supportFragmentManager.findFragmentById(R.id.main_frame_layout) as MainFragment).tryToStartOverlayService()
             }
         }
     }

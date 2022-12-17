@@ -2,6 +2,7 @@ package usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch
 
 import android.content.Context
 import android.graphics.PixelFormat
+import android.graphics.Point
 import android.os.Build
 import android.os.Handler
 import android.preference.PreferenceManager
@@ -16,38 +17,44 @@ import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.UsbDebugStatus
 class OverlayView(var mContext: Context) {
 
 
-    private var mView: View? = null
+    private val mView: View
 
     private var mListener: OverlayService.OnSwitchUsbDebuggerListener? = null
 
+    private val windowManager: WindowManager
+
+    private val displaySize: Point
 
     companion object {
         val TAG = "OverlayView"
         private var mOverlayView: OverlayView? = null
     }
 
+    init {
+        this.windowManager = mContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+
+        val display = this.windowManager.defaultDisplay
+        val size = Point()
+        display.getSize(size)
+        displaySize = size
+
+        // レイアウトファイルから重ね合わせするViewを作成する
+        val layoutInflater = LayoutInflater.from(mContext)
+        mView = layoutInflater.inflate(R.layout.overlay, null).also {
+            setupImage(it.findViewById(R.id.debug_onoff_image) as ImageView)
+        }
+    }
+
     // methods
 
     fun display(listener: OverlayService.OnSwitchUsbDebuggerListener) {
-        if (mView != null) {
-            return
-        }
-
         mListener = listener
 
-        val layoutInflater = LayoutInflater.from(mContext)
-          // Viewからインフレータを作成する
-        mView = layoutInflater.inflate(R.layout.overlay, null)
-          // レイアウトファイルから重ね合わせするViewを作成する
-
-        mView?.let {
-            setupImage(it.findViewById(R.id.debug_onoff_image) as ImageView)
-        }
 
         val params = createLayoutParams()
           // 重ね合わせするViewの設定を行う
 
-        (mContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager).let { windowManager ->
+        this.windowManager.let { windowManager ->
             windowManager.addView(mView, params as ViewGroup.LayoutParams?)
               // Viewを画面上に重ね合わせする
         }
@@ -91,9 +98,10 @@ class OverlayView(var mContext: Context) {
             } else {
                 WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
             },
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
             PixelFormat.TRANSLUCENT
-
         )
 
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext)
@@ -118,17 +126,14 @@ class OverlayView(var mContext: Context) {
      * オーバーレイで表示する画像をリセットする
      */
     fun resetImage(imageString: String) {
-        mView?.let {
-            registerImage(it.findViewById(R.id.debug_onoff_image) as ImageView)
-        }
+        registerImage(this.mView.findViewById(R.id.debug_onoff_image) as ImageView)
     }
 
 
     fun remove() {
         // サービスが破棄されるときには重ね合わせしていたViewを削除する
-        (mContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager).let { windowManager ->
+        this.windowManager.let { windowManager ->
             windowManager.removeView(mView)
         }
-        mView = null
     }
 }
