@@ -6,7 +6,7 @@ import android.provider.Settings
 import androidx.fragment.app.Fragment
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.MainFragment
 
-object SettingsStarter {
+object SettingsLauncher {
     fun startForResultFromFragment(frg: Fragment) {
         startForResult(frg)
     }

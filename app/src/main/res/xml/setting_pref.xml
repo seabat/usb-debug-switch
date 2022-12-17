@@ -20,26 +20,4 @@
         android:summary="@string/summary_enable_receive_boot_complete"
         android:defaultValue="true"/>
 
-    <PreferenceCategory
-            android:title="@string/title_icon_position"
-            android:key="pref_icon_position">
-
-        <ListPreference
-                android:key="pref_vertical_axis"
-                android:title="@string/vertical_axis"
-                android:dialogTitle="@string/vertical_axis"
-                android:entries="@array/pref_vertical_axis_entries"
-                android:entryValues="@array/pref_vertical_axis_values"
-                android:defaultValue="@string/pref_vertical_axis_default"/>
-
-        <ListPreference
-                android:key="pref_horizontal_axis"
-                android:title="@string/horizontal_axis"
-                android:dialogTitle="@string/vertical_axis"
-                android:entries="@array/pref_horizontal_axis_entries"
-                android:entryValues="@array/pref_horizontal_axis_values"
-                android:defaultValue="@string/pref_horizontal_axis_default"/>
-
-    </PreferenceCategory>
-
 </PreferenceScreen>

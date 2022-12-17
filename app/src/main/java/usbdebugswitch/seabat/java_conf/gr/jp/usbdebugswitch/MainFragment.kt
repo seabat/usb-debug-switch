@@ -13,7 +13,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.OverlayService.Companion.ACTION_SWITCH_USB_DEBUG_STATUS
-import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.SettingsStarter
+import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.SettingsLauncher
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.OverlayPermissionChecker
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.UsbDebugStatusChecker
 
@@ -50,8 +50,6 @@ class MainFragment : PreferenceFragmentCompat() {
             setUpUsbDebug()
 
             setUpAutoBoot()
-
-            setUpPosition(sharedPref)
 
             setUpChangePrefListener()
         }
@@ -177,7 +175,7 @@ class MainFragment : PreferenceFragmentCompat() {
                 override fun onPreferenceClick(p: Preference?): Boolean {
                     val key =  p?.key
                     if (key == "pref_setting_usb_debug") {
-                        SettingsStarter.startForResultFromFragment(this@MainFragment)
+                        SettingsLauncher.startForResultFromFragment(this@MainFragment)
                           // 設定画面を起動する
                         return true
                     }
@@ -194,22 +192,6 @@ class MainFragment : PreferenceFragmentCompat() {
 //        val usbDebugPref = findPreference("pref_enable_receive_boot_complete") as CheckBoxPreference
 //        if(DEBUG) Log.d(TAG, "USB Debug = ${usbDebugPref.isChecked}")
     }
-
-
-    private fun setUpPosition(sharedPref: SharedPreferences) {
-        //縦軸
-        (findPreference("pref_vertical_axis") as ListPreference).let {verticalAxis ->
-            verticalAxis.summary = sharedPref.getString(
-                "pref_vertical_axis", activity?.getString(R.string.pref_vertical_axis_default))
-        }
-
-        //横軸
-        (findPreference("pref_horizontal_axis") as ListPreference).let {horizontalAxis ->
-            horizontalAxis.summary = sharedPref.getString(
-                "pref_horizontal_axis", activity?.getString(R.string.pref_horizontal_axis_default))
-        }
-    }
-
 
     private fun setUpChangePrefListener() {
         mChangePrefListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
@@ -230,12 +212,6 @@ class MainFragment : PreferenceFragmentCompat() {
                         //TODO: サービス自動起動のON/OFF
 //                        BootReceiverSwitch.switch(context!!.applicationContext,it)
                     }
-                }
-                "pref_vertical_axis" -> {
-                    setUpPosition(sharedPreferences)
-                }
-                "pref_horizontal_axis" -> {
-                    setUpPosition(sharedPreferences)
                 }
             }
         }

@@ -13,7 +13,7 @@ import androidx.annotation.RequiresApi
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.MainFragment.Companion.ACTION_SWITCH_OVERLAY_STATUS
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.MainFragment.Companion.KEY_OVERLAY_STATUS
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.ServiceStatusChecker
-import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.SettingsStarter
+import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.SettingsLauncher
 
 
 class OverlayService() : Service() {
@@ -86,7 +86,7 @@ class OverlayService() : Service() {
 //                        it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 //                        startActivity(it)
 //                    }
-                    SettingsStarter.startOutsideOfActivity(baseContext)
+                    SettingsLauncher.startOutsideOfActivity(baseContext)
                 }
             })
             mOverlay?.display( )
