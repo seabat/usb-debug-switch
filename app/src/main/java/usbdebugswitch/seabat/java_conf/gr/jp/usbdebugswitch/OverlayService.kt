@@ -80,8 +80,7 @@ class OverlayService() : Service() {
 
     private fun overlay() {
         mOverlay?:run{
-            mOverlay = OverlayView(this)
-            mOverlay?.display( object : OnSwitchUsbDebuggerListener {
+            mOverlay = OverlayView(this, object : OnSwitchUsbDebuggerListener {
                 override fun onSwitch() {
 //                    Intent(baseContext, MainActivity::class.java).let {
 //                        it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -90,6 +89,7 @@ class OverlayService() : Service() {
                     SettingsStarter.startOutsideOfActivity(baseContext)
                 }
             })
+            mOverlay?.display( )
             setUpDebugStatusTimer()
         }
     }
@@ -196,7 +196,7 @@ class OverlayService() : Service() {
 
     override fun onDestroy() {
         // オーバーレイを finalize
-        mOverlay?.run{
+        mOverlay?.run {
             remove()
             mOverlay = null
         }

@@ -6,28 +6,27 @@ import android.graphics.Point
 import android.os.Build
 import android.os.Handler
 import android.preference.PreferenceManager
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.util.Log
+import android.view.*
 import android.widget.ImageView
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.UsbDebugStatusChecker
 
 
-class OverlayView(var mContext: Context) {
+class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchUsbDebuggerListener) {
 
 
-    private val mView: View
-
-    private var mListener: OverlayService.OnSwitchUsbDebuggerListener? = null
+    private val mOverlayView: ViewGroup
 
     private val windowManager: WindowManager
 
     private val displaySize: Point
 
+    private val mParams: WindowManager.LayoutParams
+
+    private var mIsLongClick = false
+
     companion object {
         val TAG = "OverlayView"
-        private var mOverlayView: OverlayView? = null
     }
 
     init {
@@ -37,41 +36,84 @@ class OverlayView(var mContext: Context) {
         val size = Point()
         display.getSize(size)
         displaySize = size
+        Log.d("XXX", "displaySize.x:" + displaySize.x + " displaySize.y:" + displaySize.y)
 
         // レイアウトファイルから重ね合わせするViewを作成する
         val layoutInflater = LayoutInflater.from(mContext)
-        mView = layoutInflater.inflate(R.layout.overlay, null).also {
-            setupImage(it.findViewById(R.id.debug_onoff_image) as ImageView)
-        }
+        mOverlayView = layoutInflater.inflate(R.layout.overlay, null) as ViewGroup
+        setupImage()
+
+        // 重ね合わせするViewの設定を行う
+        mParams = createLayoutParams()
     }
 
     // methods
 
-    fun display(listener: OverlayService.OnSwitchUsbDebuggerListener) {
-        mListener = listener
-
-
-        val params = createLayoutParams()
-          // 重ね合わせするViewの設定を行う
-
+    fun display() {
+        // Viewを画面上に重ね合わせて表示する
         this.windowManager.let { windowManager ->
-            windowManager.addView(mView, params as ViewGroup.LayoutParams?)
-              // Viewを画面上に重ね合わせする
+            windowManager.addView(mOverlayView, mParams)
         }
+        Log.d(TAG, "mParams.x:" + mParams.x + " mParams.y:" + mParams.y)
     }
 
-    private fun setupImage(imageView: ImageView) {
+    /**
+     * オーバーレイのレイアウトをドラッグ&ドロップできるようにリスナーを設定する
+     *
+     * ref. https://qiita.com/farman0629/items/ce547821dd2e16e4399e
+     */
+    private fun setupImage() {
+        val imageView = mOverlayView.findViewById(R.id.debug_onoff_image) as ImageView
         registerImage(imageView)
 
-        imageView.setOnClickListener {
-            imageView.visibility = View.INVISIBLE
-            Handler().postDelayed({ imageView.visibility = View.VISIBLE }, 500L)
-
-            mListener?.onSwitch()
+        mOverlayView.setOnClickListener {
+            if (!mIsLongClick) {
+                imageView.visibility = View.INVISIBLE
+                Handler().postDelayed({ imageView.visibility = View.VISIBLE }, 500L)
+                mListener.onSwitch()
+            }
         }
 
-        imageView.setOnLongClickListener {
-            //TODO: ロングクリック時にサービスをストップする
+        mOverlayView.setOnLongClickListener {
+            mIsLongClick = true
+            imageView.setAlpha(130) // 透明度を設定する MAX:255
+            false
+        }
+
+        mOverlayView.setOnTouchListener { view, motionEvent ->
+            //タップした位置
+            val x = motionEvent.rawX.toInt()
+            val y = motionEvent.rawY.toInt()
+
+            when (motionEvent.action) {
+                // Viewを移動させてるときに呼ばれる
+                MotionEvent.ACTION_MOVE -> {
+                    if (mIsLongClick) {
+                        // 中心からの座標を計算する
+                        val centerX = x - (displaySize.x / 2)
+                        val centerY = y - (displaySize.y / 2)
+
+                        Log.d(TAG,
+                            "tapX:" + x + " tapY:" + y + " fromCenterX:" + centerX + " fromCenterY:" + centerY)
+                        // オーバーレイ表示領域の座標を中心からの座標位置に移動させる
+                        mParams.x = centerX
+                        mParams.y = centerY
+
+                        // NOTE: View の gravity を設定すると上記の座標計算が利用できないので
+                        //       View には gravity を設定しないこと
+
+                        // 移動した分を更新する
+                        windowManager.updateViewLayout(mOverlayView, mParams)
+                    }
+                }
+                // Viewの移動が終わったときに呼ばれる
+                MotionEvent.ACTION_UP -> {
+                    if (mIsLongClick) {
+                        Handler().postDelayed({ mIsLongClick = false }, 500L)
+                        imageView.setAlpha(255)
+                    }
+                }
+            }
             false
         }
     }
@@ -104,19 +146,19 @@ class OverlayView(var mContext: Context) {
             PixelFormat.TRANSLUCENT
         )
 
-        val sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext)
-        params.gravity = OverlayPositionPreferenceConverter.convertPrefValueToViewValue(
-            sharedPref.getString(
-                "pref_vertical_axis",
-                mContext.resources.getString(R.string.pref_vertical_axis_default)
-            )!!
-        ) or OverlayPositionPreferenceConverter.convertPrefValueToViewValue(
-            sharedPref.getString(
-                "pref_horizontal_axis",
-                mContext.resources.getString(R.string.pref_horizontal_axis_default)
-            )!!
-        )
-        // ex. Gravity.CENTER | Gravity.TOP;
+//        val sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext)
+//        params.gravity = OverlayPositionPreferenceConverter.convertPrefValueToViewValue(
+//            sharedPref.getString(
+//                "pref_vertical_axis",
+//                mContext.resources.getString(R.string.pref_vertical_axis_default)
+//            )!!
+//        ) or OverlayPositionPreferenceConverter.convertPrefValueToViewValue(
+//            sharedPref.getString(
+//                "pref_horizontal_axis",
+//                mContext.resources.getString(R.string.pref_horizontal_axis_default)
+//            )!!
+//        )
+//        // ex. Gravity.CENTER | Gravity.TOP;
 
         return params
     }
@@ -126,14 +168,14 @@ class OverlayView(var mContext: Context) {
      * オーバーレイで表示する画像をリセットする
      */
     fun resetImage(imageString: String) {
-        registerImage(this.mView.findViewById(R.id.debug_onoff_image) as ImageView)
+        registerImage(this.mOverlayView.findViewById(R.id.debug_onoff_image) as ImageView)
     }
 
 
     fun remove() {
         // サービスが破棄されるときには重ね合わせしていたViewを削除する
         this.windowManager.let { windowManager ->
-            windowManager.removeView(mView)
+            windowManager.removeView(mOverlayView)
         }
     }
 }

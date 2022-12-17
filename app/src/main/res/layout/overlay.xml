@@ -9,8 +9,6 @@
             android:id="@+id/debug_onoff_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:scaleType="center"
             android:src="@mipmap/ic_on" />
 
 
