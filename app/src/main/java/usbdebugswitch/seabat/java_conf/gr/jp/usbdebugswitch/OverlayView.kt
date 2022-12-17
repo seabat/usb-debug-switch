@@ -90,10 +90,14 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchU
                     if (mIsLongClick) {
                         // 中心からの座標を計算する
                         val centerX = x - (displaySize.x / 2)
-                        val centerY = y - (displaySize.y / 2)
+                        var centerY = y - (displaySize.y / 2)
 
                         Log.d(TAG,
                             "tapX:" + x + " tapY:" + y + " fromCenterX:" + centerX + " fromCenterY:" + centerY)
+
+                        // 微調整
+                        centerY -= 80
+
                         // オーバーレイ表示領域の座標を中心からの座標位置に移動させる
                         mParams.x = centerX
                         mParams.y = centerY
