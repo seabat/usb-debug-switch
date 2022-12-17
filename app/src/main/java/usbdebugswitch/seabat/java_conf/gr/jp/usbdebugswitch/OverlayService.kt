@@ -44,7 +44,7 @@ class OverlayService() : Service() {
     private fun setUpUsbDebugStatusReceiver() {
         mReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                mOverlay?.resetImage("")}
+                mOverlay?.resetImage()}
             }
 
         IntentFilter().let {
@@ -106,7 +106,7 @@ class OverlayService() : Service() {
         mRunnable = object : Runnable {
             override fun run() {
                 // UIスレッド
-                mOverlay?.resetImage("")
+                mOverlay?.resetImage()
                 mHandler.postDelayed(this, 3000)
             }
         }

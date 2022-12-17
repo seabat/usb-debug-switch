@@ -5,7 +5,6 @@ import android.graphics.PixelFormat
 import android.graphics.Point
 import android.os.Build
 import android.os.Handler
-import android.preference.PreferenceManager
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
@@ -41,7 +40,8 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchU
         // レイアウトファイルから重ね合わせするViewを作成する
         val layoutInflater = LayoutInflater.from(mContext)
         mOverlayView = layoutInflater.inflate(R.layout.overlay, null) as ViewGroup
-        setupImage()
+        registerImage()
+        setupOverlayListener()
 
         // 重ね合わせするViewの設定を行う
         mParams = createLayoutParams()
@@ -62,9 +62,8 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchU
      *
      * ref. https://qiita.com/farman0629/items/ce547821dd2e16e4399e
      */
-    private fun setupImage() {
+    private fun setupOverlayListener() {
         val imageView = mOverlayView.findViewById(R.id.debug_onoff_image) as ImageView
-        registerImage(imageView)
 
         mOverlayView.setOnClickListener {
             if (!mIsLongClick) {
@@ -122,7 +121,8 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchU
     /**
      * ImageView に USBデバッグ設定の状態を表現する画像をセットする
      */
-    private fun registerImage(imageView: ImageView) {
+    private fun registerImage() {
+        val imageView = mOverlayView.findViewById(R.id.debug_onoff_image) as ImageView
         if (UsbDebugStatusChecker.isUsbDebugEnabled(mContext)) {
             imageView.setImageResource(R.mipmap.ic_on)
         } else {
@@ -153,8 +153,8 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchU
     /**
      * オーバーレイで表示する画像をリセットする
      */
-    fun resetImage(imageString: String) {
-        registerImage(this.mOverlayView.findViewById(R.id.debug_onoff_image) as ImageView)
+    fun resetImage() {
+        registerImage()
     }
 
 
