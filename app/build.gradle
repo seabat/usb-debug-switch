@@ -7,8 +7,8 @@ android {
         applicationId "usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 3
-        versionName "0.11.0"
+        versionCode 4
+        versionName "0.12.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
