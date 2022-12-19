@@ -107,7 +107,7 @@ class OverlayService() : Service() {
             override fun run() {
                 // UIスレッド
                 mOverlay?.resetImage()
-                mHandler.postDelayed(this, 3000)
+                mHandler.postDelayed(this, 5000)
             }
         }
 
