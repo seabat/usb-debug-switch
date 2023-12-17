@@ -1,4 +1,4 @@
-package usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch
+package dev.seabat.android.usbdebugswitch
 
 import android.app.*
 import android.content.BroadcastReceiver
@@ -10,10 +10,10 @@ import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import androidx.annotation.RequiresApi
-import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.MainFragment.Companion.ACTION_SWITCH_OVERLAY_STATUS
-import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.MainFragment.Companion.KEY_OVERLAY_STATUS
-import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.ServiceStatusChecker
-import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.SettingsLauncher
+import dev.seabat.android.usbdebugswitch.MainFragment.Companion.ACTION_SWITCH_OVERLAY_STATUS
+import dev.seabat.android.usbdebugswitch.MainFragment.Companion.KEY_OVERLAY_STATUS
+import dev.seabat.android.usbdebugswitch.utils.ServiceStatusChecker
+import dev.seabat.android.usbdebugswitch.utils.SettingsLauncher
 
 
 class OverlayService() : Service() {

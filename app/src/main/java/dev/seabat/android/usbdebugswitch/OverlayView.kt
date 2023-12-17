@@ -1,4 +1,4 @@
-package usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch
+package dev.seabat.android.usbdebugswitch
 
 import android.content.Context
 import android.graphics.PixelFormat
@@ -8,7 +8,7 @@ import android.os.Handler
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
-import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.UsbDebugStatusChecker
+import dev.seabat.android.usbdebugswitch.utils.UsbDebugStatusChecker
 
 
 class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchUsbDebuggerListener) {

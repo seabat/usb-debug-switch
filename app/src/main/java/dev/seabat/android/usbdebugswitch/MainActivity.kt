@@ -1,4 +1,4 @@
-package usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch
+package dev.seabat.android.usbdebugswitch
 
 import android.content.Intent
 import android.net.Uri
