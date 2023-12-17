@@ -20,6 +20,7 @@ android {
     }
 
     def APP_NAME = "UsbDebugSwitch"
+    namespace 'usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch'
     applicationVariants.all { variant ->
         variant.outputs.all {
             outputFileName = "${APP_NAME}-${variant.name}-${variant.versionName}.apk"
