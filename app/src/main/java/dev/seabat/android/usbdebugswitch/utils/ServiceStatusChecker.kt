@@ -1,4 +1,4 @@
-package usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils
+package dev.seabat.android.usbdebugswitch.utils
 
 import android.app.ActivityManager
 import android.content.Context

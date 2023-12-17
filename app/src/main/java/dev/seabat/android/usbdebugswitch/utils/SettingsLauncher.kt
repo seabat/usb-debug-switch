@@ -1,10 +1,10 @@
-package usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils
+package dev.seabat.android.usbdebugswitch.utils
 
 import android.app.Activity
 import android.content.*
 import android.provider.Settings
 import androidx.fragment.app.Fragment
-import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.MainFragment
+import dev.seabat.android.usbdebugswitch.MainFragment
 
 object SettingsLauncher {
     fun startForResultFromFragment(frg: Fragment) {

@@ -7,10 +7,10 @@ plugins {
 
 android {
     compileSdk = 33
-    namespace ="usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch"
+    namespace ="dev.seabat.android.usbdebugswitch"
 
     defaultConfig {
-        applicationId = "usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch"
+        applicationId = "dev.seabat.android.usbdebugswitch"
         minSdk = 21
         targetSdk = 33
         versionCode = 4

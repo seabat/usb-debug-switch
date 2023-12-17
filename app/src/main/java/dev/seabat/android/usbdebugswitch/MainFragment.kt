@@ -1,4 +1,4 @@
-package usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch
+package dev.seabat.android.usbdebugswitch
 
 import android.annotation.TargetApi
 import android.content.*
@@ -14,10 +14,10 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
-import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.OverlayService.Companion.ACTION_SWITCH_USB_DEBUG_STATUS
-import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.OverlayPermissionChecker
-import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.SettingsLauncher
-import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.UsbDebugStatusChecker
+import dev.seabat.android.usbdebugswitch.OverlayService.Companion.ACTION_SWITCH_USB_DEBUG_STATUS
+import dev.seabat.android.usbdebugswitch.utils.OverlayPermissionChecker
+import dev.seabat.android.usbdebugswitch.utils.SettingsLauncher
+import dev.seabat.android.usbdebugswitch.utils.UsbDebugStatusChecker
 
 class MainFragment : PreferenceFragmentCompat() {
 
