@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -16,6 +18,7 @@ import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.OverlayService.Compa
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.SettingsLauncher
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.OverlayPermissionChecker
 import usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch.utils.UsbDebugStatusChecker
+import java.util.jar.Manifest
 
 class MainFragment : PreferenceFragmentCompat() {
 
@@ -37,23 +40,66 @@ class MainFragment : PreferenceFragmentCompat() {
     private var USB_DEBUG_ON: String= ""
     private var USB_DEBUG_OFF: String= ""
 
+    enum class SetupStatusType {
+        NONE,
+        NOTIFICATION, // 通知パーミッションのセットアップ
+        OVERLAY, // オーバーレイ表示領域のセットアップ
+        USB_DEBUG, // USB デバッグ表示領域のセットアップ
+        AUTO_BOOT, // 端末起動時ブロードキャストを受信するようセットアップ
+        FINISH,
+    }
+
+    private var setupStatus = SetupStatusType.NONE
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            proceedSetup(SetupStatusType.NOTIFICATION)
+        } else {
+            Toast.makeText(
+                requireContext(),
+                "Please grant Post Notification Permission",
+                Toast.LENGTH_SHORT
+            )
+        }
+    }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     override fun onCreatePreferences(p0: Bundle?, p1: String?) {
 
           // Load the appinfo_preferences from an XML resource
         addPreferencesFromResource(R.xml.setting_pref)
-        activity?.let {
-            val sharedPref = PreferenceManager.getDefaultSharedPreferences(activity)
-            setUpOverlay(sharedPref)
 
-            setUpUsbDebug()
+        proceedSetup(SetupStatusType.NONE)
+    }
 
-            setUpAutoBoot()
-
-            setUpChangePrefListener()
+    private fun proceedSetup(setupStatus: SetupStatusType) {
+        this.setupStatus = setupStatus
+        Log.i("UsbDebugSwitch", "Setup status: $setupStatus")
+        when(setupStatus) {
+            SetupStatusType.NONE -> {
+                requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
+            SetupStatusType.NOTIFICATION -> {
+                val sharedPref = PreferenceManager.getDefaultSharedPreferences(activity)
+                setUpOverlay(sharedPref)
+            }
+            SetupStatusType.OVERLAY -> {
+                setUpUsbDebug()
+            }
+            SetupStatusType.USB_DEBUG -> {
+                setUpAutoBoot()
+            }
+            SetupStatusType.AUTO_BOOT -> {
+                setUpChangePrefListener()
+            }
+            SetupStatusType.FINISH -> {
+                // Do nothing
+            }
         }
     }
+
 
 
     /**
@@ -83,6 +129,8 @@ class MainFragment : PreferenceFragmentCompat() {
                 overlayStatus.summary = statusString
                 if (statusString == OVERLAY_ON) {
                     tryToStartOverlayService()
+                } else {
+                    proceedSetup(SetupStatusType.OVERLAY)
                 }
             }
         }
@@ -99,6 +147,7 @@ class MainFragment : PreferenceFragmentCompat() {
         } else {
             disableOverlayPreference()
         }
+        proceedSetup(SetupStatusType.OVERLAY)
     }
 
 
@@ -183,6 +232,7 @@ class MainFragment : PreferenceFragmentCompat() {
                 }
             })
         }
+        proceedSetup(SetupStatusType.USB_DEBUG)
     }
 
 
@@ -191,6 +241,7 @@ class MainFragment : PreferenceFragmentCompat() {
 //        //自動起動設定を CheckBoxPreference に反映
 //        val usbDebugPref = findPreference("pref_enable_receive_boot_complete") as CheckBoxPreference
 //        if(DEBUG) Log.d(TAG, "USB Debug = ${usbDebugPref.isChecked}")
+        proceedSetup(SetupStatusType.AUTO_BOOT)
     }
 
     private fun setUpChangePrefListener() {
@@ -216,6 +267,7 @@ class MainFragment : PreferenceFragmentCompat() {
             }
         }
         PreferenceManager.getDefaultSharedPreferences(activity).registerOnSharedPreferenceChangeListener(mChangePrefListener)
+        proceedSetup(SetupStatusType.FINISH)
     }
 
 

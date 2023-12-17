@@ -2,11 +2,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 31
     defaultConfig {
         applicationId "usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch"
         minSdkVersion 21
-        targetSdkVersion 31
+        compileSdk 33
+        targetSdkVersion 33
         versionCode 4
         versionName "0.12.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
