@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.*
 import android.provider.Settings
 import androidx.fragment.app.Fragment
-import dev.seabat.android.usbdebugswitch.MainFragment
+import dev.seabat.android.usbdebugswitch.MainActivity.Companion.REQUEST_APPLICATION_DEVELOPMENT_SETTINGS
 
 object SettingsLauncher {
     fun startForResultFromFragment(frg: Fragment) {
@@ -20,9 +20,9 @@ object SettingsLauncher {
             Intent().let { intent ->
                 intent.action = Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS
                 if (t is Fragment) {
-                    t.startActivityForResult(intent, MainFragment.REQUEST_APPLICATION_DEVELOPMENT_SETTINGS)
+                    t.startActivityForResult(intent, REQUEST_APPLICATION_DEVELOPMENT_SETTINGS)
                 } else if (t is Activity) {
-                    t.startActivityForResult(intent, MainFragment.REQUEST_APPLICATION_DEVELOPMENT_SETTINGS)
+                    t.startActivityForResult(intent, REQUEST_APPLICATION_DEVELOPMENT_SETTINGS)
                 } else {
                     throw IllegalArgumentException("Unauthorized parameter")
                 }
@@ -36,9 +36,9 @@ object SettingsLauncher {
                 )
                 intent.setAction("android.intent.action.View")
                 if (t is Fragment) {
-                    t.startActivityForResult(intent, MainFragment.REQUEST_APPLICATION_DEVELOPMENT_SETTINGS)
+                    t.startActivityForResult(intent, REQUEST_APPLICATION_DEVELOPMENT_SETTINGS)
                 } else if (t is Activity) {
-                    t.startActivityForResult(intent, MainFragment.REQUEST_APPLICATION_DEVELOPMENT_SETTINGS)
+                    t.startActivityForResult(intent, REQUEST_APPLICATION_DEVELOPMENT_SETTINGS)
                 }
             }
         }

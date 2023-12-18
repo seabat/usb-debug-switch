@@ -10,8 +10,8 @@ import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import androidx.annotation.RequiresApi
-import dev.seabat.android.usbdebugswitch.MainFragment.Companion.ACTION_SWITCH_OVERLAY_STATUS
-import dev.seabat.android.usbdebugswitch.MainFragment.Companion.KEY_OVERLAY_STATUS
+import dev.seabat.android.usbdebugswitch.MainActivity.Companion.ACTION_SWITCH_OVERLAY_STATUS
+import dev.seabat.android.usbdebugswitch.MainActivity.Companion.KEY_OVERLAY_STATUS
 import dev.seabat.android.usbdebugswitch.utils.ServiceStatusChecker
 import dev.seabat.android.usbdebugswitch.utils.SettingsLauncher
 
