@@ -15,7 +15,10 @@ object SettingsLauncher {
         startForResult(activity)
     }
 
-    fun <T> startForResult(t: T) {
+    /**
+     * 設定アプリの「開発者向けオプション」画面を起動する
+     */
+    private fun <T> startForResult(t: T) {
         try {
             Intent().let { intent ->
                 intent.action = Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS
