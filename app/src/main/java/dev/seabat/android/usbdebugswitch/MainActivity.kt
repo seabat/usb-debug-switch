@@ -5,16 +5,19 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
 import dev.seabat.android.usbdebugswitch.compose.MainScreen
+import dev.seabat.android.usbdebugswitch.dialog.PermissionWarningDialog
 import dev.seabat.android.usbdebugswitch.utils.OverlayPermissionChecker
 import dev.seabat.android.usbdebugswitch.utils.SettingsLauncher
 import dev.seabat.android.usbdebugswitch.utils.UsbDebugStatusChecker
@@ -22,14 +25,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-
-class MainActivity : AppCompatActivity(), MessageDialogFragment.OnClickListener{
+class MainActivity : AppCompatActivity(){
 
     companion object {
         const val TAG = "MainActivity"
         private val DEBUG = BuildConfig.DEBUG
         const val REQUEST_APPLICATION_DEVELOPMENT_SETTINGS = 20
-        const val TAG_GOTO_OVERLAY_SETTING = "TAG_GOTO_OVERLAY_SETTING";
+        const val TAG_GOTO_OVERLAY_SETTING = "TAG_GOTO_OVERLAY_SETTING"
+        const val TAG_GOTO_APP_SETTING = "TAG_GOTO_APP_SETTING"
         const val ACTION_SWITCH_OVERLAY_STATUS = "ACTION_SWITCH_OVERLAY_STATUS"
         const val KEY_OVERLAY_STATUS = "KEY_OVERLAY_STATUS"
     }
@@ -95,6 +98,20 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.OnClickListener{
             )
         }
 
+        supportFragmentManager.setFragmentResultListener(
+            TAG_GOTO_OVERLAY_SETTING,
+            this
+        ) { _, _ ->
+            launchOverlaySetting()
+        }
+
+        supportFragmentManager.setFragmentResultListener(
+            TAG_GOTO_APP_SETTING,
+            this
+        ) { _, _ ->
+            launchAppSetting()
+        }
+
         // セットアップ開始
         proceedSetup(SetupStatusType.OVERLAY_VIEW)
     }
@@ -123,11 +140,24 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.OnClickListener{
         super.onDestroy()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            REQUEST_APPLICATION_DEVELOPMENT_SETTINGS -> {
+                setUpUsbDebugView()
+                Intent().let {
+                    it.action = OverlayService.ACTION_SWITCH_USB_DEBUG_STATUS
+                    sendBroadcast(it)
+                }
+            }
+        }
+    }
 
     /**
-     * MessageDialogFragment.OnClickListener の onClick
+     * オーバーレイの設定画面を起動する
      */
-    override fun onClick() {
+    private fun launchOverlaySetting() {
         // 設定画面を起動する
         // 設定->アプリ->歯車アイコン->他のアプリの上に重ねて表示
         val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
@@ -151,19 +181,12 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.OnClickListener{
         )
     }
 
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        when (requestCode) {
-            REQUEST_APPLICATION_DEVELOPMENT_SETTINGS -> {
-                setUpUsbDebugView()
-                Intent().let {
-                    it.action = OverlayService.ACTION_SWITCH_USB_DEBUG_STATUS
-                    sendBroadcast(it)
-                }
-            }
+    private fun launchAppSetting() {
+        val intent = Intent().apply {
+            action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+            data = Uri.parse("package:dev.seabat.android.usbdebugswitch")
         }
+        startActivity(intent)
     }
 
     private fun proceedSetup(next: SetupStatusType) {
@@ -214,7 +237,8 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.OnClickListener{
                     proceedSetup(next = SetupStatusType.OVERLAY_SERVICE)
                 } else {
                     // オーバーレイ権限がない場合、ダイアログを表示
-                    MessageDialogFragment.newInstance(getString(R.string.dialog_msg_goto_overlay_setting))
+                    PermissionWarningDialog
+                        .newInstance(getString(R.string.dialog_msg_goto_overlay_setting), TAG_GOTO_OVERLAY_SETTING)
                         .show(this.supportFragmentManager, MainActivity.TAG_GOTO_OVERLAY_SETTING)
                 }
             } else {
@@ -233,12 +257,25 @@ class MainActivity : AppCompatActivity(), MessageDialogFragment.OnClickListener{
      * オーバーレイサービスを開始を試みる
      */
     private fun tryToStartOverlayService(){
+        ActivityCompat.checkSelfPermission(
+            this,
+            android.Manifest.permission.POST_NOTIFICATIONS,
+        ).also { checkPermissionResult ->
+            if (checkPermissionResult != PackageManager.PERMISSION_GRANTED) {
+                PermissionWarningDialog
+                    .newInstance(getString(R.string.notification_permission_dialog_message), TAG_GOTO_APP_SETTING)
+                    .show(this.supportFragmentManager, TAG_GOTO_APP_SETTING)
+                return
+            }
+        }
+
         if (OverlayPermissionChecker.isEnabled(this)) {
             val intent = Intent(this, OverlayService::class.java)
             startService(intent)
         } else {
             // オーバーレイ権限がない場合、ダイアログを表示
-            MessageDialogFragment.newInstance(getString(R.string.dialog_msg_goto_overlay_setting))
+            PermissionWarningDialog
+                .newInstance(getString(R.string.dialog_msg_goto_overlay_setting), TAG_GOTO_OVERLAY_SETTING)
                 .show(this.supportFragmentManager, MainActivity.TAG_GOTO_OVERLAY_SETTING)
         }
     }
