@@ -7,7 +7,7 @@ import dev.seabat.android.usbdebugswitch.R
 import kotlinx.coroutines.flow.update
 
 class OverlaySettingRepository(
-    val context: Context = MainApplication.instance
+    private val context: Context = MainApplication.instance
 ) {
 
 

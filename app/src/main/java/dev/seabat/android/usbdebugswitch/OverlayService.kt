@@ -144,7 +144,7 @@ class OverlayService() : Service() {
     private fun createNotificationVersion26(): Notification {
         NotificationChannel(
                 CHANNEL_ID,
-                getString(R.string.noti_channel_overlay),
+                getString(R.string.notification_channel_overlay),
                 NotificationManager.IMPORTANCE_DEFAULT
         ).let {
             it.lightColor = Color.GREEN
