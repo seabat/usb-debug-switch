@@ -13,9 +13,9 @@ import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.PreferenceManager
 import dev.seabat.android.usbdebugswitch.compose.MainScreen
 import dev.seabat.android.usbdebugswitch.dialog.PermissionWarningDialog
+import dev.seabat.android.usbdebugswitch.repositories.OverlaySettingRepository
 import dev.seabat.android.usbdebugswitch.utils.CheckNotificationPermission
 import dev.seabat.android.usbdebugswitch.utils.CheckOverlayPermission
 import dev.seabat.android.usbdebugswitch.utils.DeveloperOptionsLauncher
@@ -65,6 +65,9 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
+    private val _internetStateFlow = MutableStateFlow("")
+    private val internetStateFlow = _internetStateFlow.asStateFlow()
+
     private val _overlayStateFlow = MutableStateFlow("")
     private val overlayStateFlow = _overlayStateFlow.asStateFlow()
 
@@ -79,12 +82,11 @@ class MainActivity : AppCompatActivity(){
 
         setContent {
             MainScreen(
-                overlayStateFlow,
-                usbDebugStateFlow,
+                internetStateFlow = internetStateFlow,
+                overlayStateFlow = overlayStateFlow,
+                usbDebugStateFlow = usbDebugStateFlow,
                 onOverlaySwitch = {
-                    val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
-                    val overlaySetting = sharedPref.getString("pref_setting_overlay", getString(R.string.setting_overlay_off))
-                    if (overlaySetting == getString(R.string.setting_overlay_off)) {
+                    if (!OverlaySettingRepository().isEnabled()) {
                         tryToStartOverlayService()
                     } else {
                         stopOverlayService()
@@ -93,6 +95,9 @@ class MainActivity : AppCompatActivity(){
                 onUsbDebugSwitch = {
                     // 設定画面を起動する
                     DeveloperOptionsLauncher.startForResultFromActivity(this@MainActivity)
+                },
+                onInternetSwitch = {
+
                 }
             )
         }
@@ -225,27 +230,21 @@ class MainActivity : AppCompatActivity(){
      * Preference に "ON" が格納されている場合は、オーバーレイサービスの開始を試みる。
      */
     private fun setUpOverlayPermission() {
-        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
-        sharedPref.getString(
-            "pref_setting_overlay",
-            getString(R.string.setting_overlay_off)
-        ).let { statusString ->
-            _overlayStateFlow.update { statusString!! }
-            if (statusString == getString(R.string.setting_overlay_on)) {
-                CheckOverlayPermission(this)(
-                    enabled = {
-                        proceedSetup(next = SetupStatusType.OVERLAY_SERVICE)
-                    },
-                    disabled = {
-                        // オーバーレイ権限がない場合、ダイアログを表示
-                        PermissionWarningDialog
-                            .newInstance(getString(R.string.dialog_msg_goto_overlay_setting), TAG_GOTO_OVERLAY_SETTING)
-                            .show(this.supportFragmentManager, MainActivity.TAG_GOTO_OVERLAY_SETTING)
-                    }
-                )
-            } else {
-                proceedSetup(next = SetupStatusType.FINISH)
-            }
+        _overlayStateFlow.update{ OverlaySettingRepository().load() }
+        if (OverlaySettingRepository().isEnabled()) {
+            CheckOverlayPermission(this)(
+                enabled = {
+                    proceedSetup(next = SetupStatusType.OVERLAY_SERVICE)
+                },
+                disabled = {
+                    // オーバーレイ権限がない場合、ダイアログを表示
+                    PermissionWarningDialog
+                        .newInstance(getString(R.string.dialog_msg_goto_overlay_setting), TAG_GOTO_OVERLAY_SETTING)
+                        .show(this.supportFragmentManager, MainActivity.TAG_GOTO_OVERLAY_SETTING)
+                }
+            )
+        } else {
+            proceedSetup(next = SetupStatusType.FINISH)
         }
     }
 
@@ -290,12 +289,7 @@ class MainActivity : AppCompatActivity(){
      * オーバーレイ preference を無効にする
      */
     private fun disableOverlayPreference() {
-        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
-        sharedPref.edit().let {editor ->
-            editor.putString("pref_setting_overlay", getString(R.string.setting_overlay_off))
-            editor.commit() // commit を忘れずに！
-        }
-
+        OverlaySettingRepository().save(getString(R.string.setting_overlay_off))
         _overlayStateFlow.update {
             getString(R.string.setting_overlay_off)
         }
@@ -305,12 +299,7 @@ class MainActivity : AppCompatActivity(){
      * オーバーレイ preference を有効にする
      */
     private fun enableOverlayPreference() {
-        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
-        sharedPref.edit().let {editor ->
-            editor.putString("pref_setting_overlay", getString(R.string.setting_usb_debug_on))
-            editor.commit() // commit を忘れずに！
-        }
-
+        OverlaySettingRepository().save(getString(R.string.setting_usb_debug_on))
         _overlayStateFlow.update {
             getString(R.string.setting_usb_debug_on)
         }

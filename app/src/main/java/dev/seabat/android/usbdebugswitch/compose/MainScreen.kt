@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,7 +25,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -39,11 +37,14 @@ import kotlinx.coroutines.flow.StateFlow
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
+    internetStateFlow: StateFlow<String>,
     overlayStateFlow: StateFlow<String>,
     usbDebugStateFlow: StateFlow<String>,
+    onInternetSwitch: () -> Unit,
     onOverlaySwitch: () -> Unit,
     onUsbDebugSwitch: () -> Unit
 ) {
+    val internetState by internetStateFlow.collectAsState()
     val overlayState by overlayStateFlow.collectAsState()
     val usbDebugState by usbDebugStateFlow.collectAsState()
 
@@ -92,6 +93,12 @@ fun MainScreen(
                 state =  usbDebugState,
                 onSwitch = onUsbDebugSwitch
             )
+
+            SettingCard(
+                title =  stringResource(id = R.string.title_setting_internet),
+                state =  internetState,
+                onSwitch = onInternetSwitch
+            )
         }
     }
 }
@@ -138,7 +145,9 @@ fun MainScreenPreview() {
     MainScreen(
         MutableStateFlow("ON"),
         MutableStateFlow(""),
+        MutableStateFlow(""),
+        onInternetSwitch = {},
         onOverlaySwitch = {},
-        onUsbDebugSwitch = {}
+        onUsbDebugSwitch = {},
     )
 }

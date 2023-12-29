@@ -20,6 +20,8 @@
     <string name="setting_overlay_off">OFF</string>
     <string name="summary_setting_overlay">@string/setting_overlay_off</string>
 
+    <string name="title_setting_internet">インターネット接続</string>
+
     <string name="notification_permission_dialog_message">本アプリの通知が許可されてません。アプリの権限画面で「USB Debug Switch のすべての通知」を ON にしてください。</string>
 
     <!-- Preference -->
