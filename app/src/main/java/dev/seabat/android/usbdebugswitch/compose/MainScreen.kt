@@ -76,76 +76,58 @@ fun MainScreen(
             Image(
                 modifier = Modifier
                     .padding(vertical = 20.dp)
-                    .size(100.dp)
-                    .clip(CircleShape),
+                    .size(100.dp),
                 painter = painterResource(id = R.mipmap.ic_launcher_foreground_toumei),
                 contentDescription = stringResource(id = R.string.app_name)
             )
 
-            OutlinedCard(
-                modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                    .fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFFBEFF6)
-                ),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 6.dp
-                )
-            ) {
-                Row(
-                    modifier = Modifier
-                        .padding(start = 20.dp, end = 20.dp)
-                        .height(100.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        modifier = Modifier.weight(1.0f),
-                        text = stringResource(id = R.string.title_setting_overlay),
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                    Switch(
-                        checked = overlayState == "ON",
-                        onCheckedChange = { onOverlaySwitch() },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color(0xFFFFFFFF),
-                            checkedTrackColor = Color(0xFF75565c)
-                        )
-                    )
-                }
-            }
+            SettingCard(
+                title =  stringResource(id = R.string.title_setting_overlay),
+                state =  overlayState,
+                onSwitch = onOverlaySwitch
+            )
 
-            OutlinedCard(
-                modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                    .fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFFBEFF6)
-                ),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 6.dp
+            SettingCard(
+                title =  stringResource(id = R.string.title_setting_usb_debug),
+                state =  usbDebugState,
+                onSwitch = onUsbDebugSwitch
+            )
+        }
+    }
+}
+
+@Composable
+fun SettingCard(title: String, state: String, onSwitch: () -> Unit) {
+    OutlinedCard(
+        modifier = Modifier
+            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFFBEFF6)
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(start = 20.dp, end = 20.dp)
+                .height(100.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier.weight(1.0f),
+                text = title,
+                style = MaterialTheme.typography.headlineSmall
+            )
+            Switch(
+                checked = state == "ON",
+                onCheckedChange = { onSwitch() },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = Color(0xFFFFFFFF),
+                    checkedTrackColor = Color(0xFF75565c)
                 )
-            ) {
-                Row(modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
-                    .height(100.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        modifier = Modifier.weight(1.0f),
-                        text = stringResource(id = R.string.title_setting_usb_debug),
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                    Switch(
-                        checked = usbDebugState == "ON",
-                        onCheckedChange = { onUsbDebugSwitch() },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color(0xFFFFFFFF),
-                            checkedTrackColor = Color(0xFF75565c)
-                        )
-                    )
-                }
-            }
+            )
         }
     }
 }
