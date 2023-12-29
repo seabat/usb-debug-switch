@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity(){
             MainScreen(
                 overlayStateFlow,
                 usbDebugStateFlow,
-                onOverlayCardClick = {
+                onOverlaySwitch = {
                     val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
                     val overlaySetting = sharedPref.getString("pref_setting_overlay", getString(R.string.setting_overlay_off))
                     if (overlaySetting == getString(R.string.setting_overlay_off)) {
@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity(){
                         stopOverlayService()
                     }
                 },
-                onUsbDebugCardClick = {
+                onUsbDebugSwitch = {
                     // 設定画面を起動する
                     SettingsLauncher.startForResultFromActivity(this@MainActivity)
                 }

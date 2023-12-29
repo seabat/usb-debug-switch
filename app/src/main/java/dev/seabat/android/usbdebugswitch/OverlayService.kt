@@ -241,6 +241,9 @@ class OverlayService() : Service() {
 
 
     interface OnSwitchUsbDebuggerListener {
+        /**
+         * オーバーレイ表示されているUSB デバッグアイコンがクリックされた
+         */
         fun onSwitch()
     }
 }

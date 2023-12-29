@@ -6,11 +6,18 @@ import android.provider.Settings
 import androidx.fragment.app.Fragment
 import dev.seabat.android.usbdebugswitch.MainActivity.Companion.REQUEST_APPLICATION_DEVELOPMENT_SETTINGS
 
+/**
+ * 設定アプリの「開発者向けオプション」画面を起動するクラス
+ */
 object SettingsLauncher {
     fun startForResultFromFragment(frg: Fragment) {
         startForResult(frg)
     }
 
+
+    /**
+     * Activity から設定アプリの「開発者向けオプション」画面を起動する
+     */
     fun startForResultFromActivity(activity: Activity) {
         startForResult(activity)
     }
@@ -47,6 +54,9 @@ object SettingsLauncher {
         }
     }
 
+    /**
+     * Activity ではないところから設定アプリの「開発者向けオプション」画面を起動する
+     */
     fun startOutsideOfActivity(context: Context) {
         try {
             Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS).let { intent ->
