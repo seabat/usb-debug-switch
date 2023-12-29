@@ -18,7 +18,7 @@ import dev.seabat.android.usbdebugswitch.compose.MainScreen
 import dev.seabat.android.usbdebugswitch.dialog.PermissionWarningDialog
 import dev.seabat.android.usbdebugswitch.utils.CheckNotificationPermission
 import dev.seabat.android.usbdebugswitch.utils.CheckOverlayPermission
-import dev.seabat.android.usbdebugswitch.utils.SettingsLauncher
+import dev.seabat.android.usbdebugswitch.utils.DeveloperOptionsLauncher
 import dev.seabat.android.usbdebugswitch.utils.UsbDebugStatusChecker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity(){
                 },
                 onUsbDebugSwitch = {
                     // 設定画面を起動する
-                    SettingsLauncher.startForResultFromActivity(this@MainActivity)
+                    DeveloperOptionsLauncher.startForResultFromActivity(this@MainActivity)
                 }
             )
         }
@@ -143,6 +143,7 @@ class MainActivity : AppCompatActivity(){
         super.onActivityResult(requestCode, resultCode, data)
 
         when (requestCode) {
+            // 「開発者向けオプション」画面から戻った本アプリに戻った場合
             REQUEST_APPLICATION_DEVELOPMENT_SETTINGS -> {
                 setUpUsbDebugView()
                 Intent().let {

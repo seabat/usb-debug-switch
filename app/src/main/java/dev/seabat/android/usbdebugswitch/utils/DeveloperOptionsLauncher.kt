@@ -9,7 +9,7 @@ import dev.seabat.android.usbdebugswitch.MainActivity.Companion.REQUEST_APPLICAT
 /**
  * 設定アプリの「開発者向けオプション」画面を起動するクラス
  */
-object SettingsLauncher {
+object DeveloperOptionsLauncher {
     fun startForResultFromFragment(frg: Fragment) {
         startForResult(frg)
     }
@@ -27,12 +27,16 @@ object SettingsLauncher {
      */
     private fun <T> startForResult(t: T) {
         try {
-            Intent().let { intent ->
-                intent.action = Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS
+            Intent().apply {
+                action = "com.android.settings.APPLICATION_DEVELOPMENT_SETTINGS"
+                // NOTE: action = Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS だと
+                //       startActivityForResult で 「開発者向けオプション」画面は起動するが onActivityResult
+                //       が起動しないので注意する。
+            }.let {
                 if (t is Fragment) {
-                    t.startActivityForResult(intent, REQUEST_APPLICATION_DEVELOPMENT_SETTINGS)
+                    t.startActivityForResult(it, REQUEST_APPLICATION_DEVELOPMENT_SETTINGS)
                 } else if (t is Activity) {
-                    t.startActivityForResult(intent, REQUEST_APPLICATION_DEVELOPMENT_SETTINGS)
+                    t.startActivityForResult(it, REQUEST_APPLICATION_DEVELOPMENT_SETTINGS)
                 } else {
                     throw IllegalArgumentException("Unauthorized parameter")
                 }
