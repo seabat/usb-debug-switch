@@ -13,14 +13,8 @@ object UsbDebugStatusChecker {
 
     fun isUsbDebugEnabled(context: Context): Boolean {
         // 設定から USBデバッグの状態を取得
+        // NOTE: Settings.Secure.ADB_ENABLED was deprecated in API level 17
         var adb = Settings.Global.getInt(context.contentResolver, Settings.Global.ADB_ENABLED, 0)
-          // Settings.Secure.ADB_ENABLED was deprecated in API level 17
-
-        return if (adb == 1) {
-            true
-        } else {
-            false
-        }
+        return adb == 1
     }
-
 }
