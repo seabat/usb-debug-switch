@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import dev.seabat.android.usbdebugswitch.utils.OverlayPermissionChecker
+import dev.seabat.android.usbdebugswitch.utils.CheckOverlayPermission
 
 class BootCompleteReceiver : BroadcastReceiver() {
 
@@ -23,15 +23,18 @@ class BootCompleteReceiver : BroadcastReceiver() {
     private val receiverScope = CoroutineScope(Dispatchers.Main + Job())
 
     override fun onReceive(context: Context, intent: Intent) {
-        if(DEBUG) Log.d(TAG, "START RECEIVER")
-        if(!Intent.ACTION_BOOT_COMPLETED.equals(intent.action)) {
+        if (DEBUG) Log.d(TAG, "START RECEIVER")
+        if (!Intent.ACTION_BOOT_COMPLETED.equals(intent.action)) {
             return
         }
 
-        if (!OverlayPermissionChecker.isEnabled(context)) {
-            return
-        }
+        CheckOverlayPermission(context)(
+            enabled = { startOverlayService(context) },
+            disabled = { /* Do nothing */ }
+        )
+    }
 
+    private fun startOverlayService(context: Context) {
         val pendingResult = goAsync()
 
         receiverScope.launch {

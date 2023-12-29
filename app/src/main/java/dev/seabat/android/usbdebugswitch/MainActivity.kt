@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -14,11 +13,11 @@ import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
 import dev.seabat.android.usbdebugswitch.compose.MainScreen
 import dev.seabat.android.usbdebugswitch.dialog.PermissionWarningDialog
-import dev.seabat.android.usbdebugswitch.utils.OverlayPermissionChecker
+import dev.seabat.android.usbdebugswitch.utils.CheckNotificationPermission
+import dev.seabat.android.usbdebugswitch.utils.CheckOverlayPermission
 import dev.seabat.android.usbdebugswitch.utils.SettingsLauncher
 import dev.seabat.android.usbdebugswitch.utils.UsbDebugStatusChecker
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -171,11 +170,10 @@ class MainActivity : AppCompatActivity(){
             object : AppOpsManager.OnOpChangedListener {
                 override fun onOpChanged(op: String?, packageName: String?) {
                     appOpsManager?.stopWatchingMode(this)    //監視を止める
-                    if(OverlayPermissionChecker.isEnabled(this@MainActivity)) {
-                        proceedSetup(next = SetupStatusType.OVERLAY_SERVICE)
-                    } else {
-                        proceedSetup(next = SetupStatusType.FINISH)
-                    }
+                    CheckOverlayPermission(this@MainActivity)(
+                        enabled = { proceedSetup(next = SetupStatusType.OVERLAY_SERVICE) },
+                        disabled = { proceedSetup(next = SetupStatusType.FINISH) }
+                    )
                 }
             }
         )
@@ -233,14 +231,17 @@ class MainActivity : AppCompatActivity(){
         ).let { statusString ->
             _overlayStateFlow.update { statusString!! }
             if (statusString == getString(R.string.setting_overlay_on)) {
-                if (OverlayPermissionChecker.isEnabled(this)) {
-                    proceedSetup(next = SetupStatusType.OVERLAY_SERVICE)
-                } else {
-                    // オーバーレイ権限がない場合、ダイアログを表示
-                    PermissionWarningDialog
-                        .newInstance(getString(R.string.dialog_msg_goto_overlay_setting), TAG_GOTO_OVERLAY_SETTING)
-                        .show(this.supportFragmentManager, MainActivity.TAG_GOTO_OVERLAY_SETTING)
-                }
+                CheckOverlayPermission(this)(
+                    enabled = {
+                        proceedSetup(next = SetupStatusType.OVERLAY_SERVICE)
+                    },
+                    disabled = {
+                        // オーバーレイ権限がない場合、ダイアログを表示
+                        PermissionWarningDialog
+                            .newInstance(getString(R.string.dialog_msg_goto_overlay_setting), TAG_GOTO_OVERLAY_SETTING)
+                            .show(this.supportFragmentManager, MainActivity.TAG_GOTO_OVERLAY_SETTING)
+                    }
+                )
             } else {
                 proceedSetup(next = SetupStatusType.FINISH)
             }
@@ -257,29 +258,32 @@ class MainActivity : AppCompatActivity(){
      * オーバーレイサービスを開始を試みる
      */
     private fun tryToStartOverlayService(){
-        ActivityCompat.checkSelfPermission(
-            this,
-            android.Manifest.permission.POST_NOTIFICATIONS,
-        ).also { checkPermissionResult ->
-            if (checkPermissionResult != PackageManager.PERMISSION_GRANTED) {
+        // 通知パーミッションをチェック
+        CheckNotificationPermission(this)(
+            enabled = {
+                // オーバーレイ権限をチェック
+                CheckOverlayPermission(this)(
+                    enabled ={
+                        // オーバーレイサービスを開始
+                        val intent = Intent(this, OverlayService::class.java)
+                        startService(intent)
+                    },
+                    disabled = {
+                        // オーバーレイ権限がない場合、ダイアログを表示
+                        PermissionWarningDialog
+                            .newInstance(getString(R.string.dialog_msg_goto_overlay_setting), TAG_GOTO_OVERLAY_SETTING)
+                            .show(this.supportFragmentManager, MainActivity.TAG_GOTO_OVERLAY_SETTING)
+                    }
+                )
+            },
+            disabled = {
+                // パーミッション警告ダイアログを表示
                 PermissionWarningDialog
                     .newInstance(getString(R.string.notification_permission_dialog_message), TAG_GOTO_APP_SETTING)
                     .show(this.supportFragmentManager, TAG_GOTO_APP_SETTING)
-                return
             }
-        }
-
-        if (OverlayPermissionChecker.isEnabled(this)) {
-            val intent = Intent(this, OverlayService::class.java)
-            startService(intent)
-        } else {
-            // オーバーレイ権限がない場合、ダイアログを表示
-            PermissionWarningDialog
-                .newInstance(getString(R.string.dialog_msg_goto_overlay_setting), TAG_GOTO_OVERLAY_SETTING)
-                .show(this.supportFragmentManager, MainActivity.TAG_GOTO_OVERLAY_SETTING)
-        }
+        )
     }
-
 
     /**
      * オーバーレイ preference を無効にする
