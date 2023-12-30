@@ -7,12 +7,14 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
 import android.net.wifi.WifiManager
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import dev.seabat.android.usbdebugswitch.compose.MainScreen
 import dev.seabat.android.usbdebugswitch.constants.InternetStateType
@@ -22,6 +24,7 @@ import dev.seabat.android.usbdebugswitch.constants.UsbDebugStateType
 import dev.seabat.android.usbdebugswitch.dialog.PermissionWarningDialog
 import dev.seabat.android.usbdebugswitch.repositories.InternetStateRepository
 import dev.seabat.android.usbdebugswitch.repositories.OverlayStateRepository
+import dev.seabat.android.usbdebugswitch.repositories.SelectedOverlayRepository
 import dev.seabat.android.usbdebugswitch.services.OverlayService
 import dev.seabat.android.usbdebugswitch.utils.CheckNotificationPermission
 import dev.seabat.android.usbdebugswitch.utils.CheckOverlayPermission
@@ -41,6 +44,7 @@ class MainActivity : AppCompatActivity(){
         const val TAG_GOTO_APP_SETTING = "TAG_GOTO_APP_SETTING"
         const val ACTION_SWITCH_OVERLAY_STATUS = "ACTION_SWITCH_OVERLAY_STATUS"
         const val KEY_OVERLAY_STATUS = "KEY_OVERLAY_STATUS"
+        const val KEY_SELECTED_OVERLAY = "KEY_SELECTED_OVERLAY"
     }
 
     private lateinit var mOverlayStatusReceiver: BroadcastReceiver
@@ -167,10 +171,11 @@ class MainActivity : AppCompatActivity(){
             // 「開発者向けオプション」画面から戻った本アプリに戻った場合
             REQUEST_APPLICATION_DEVELOPMENT_SETTINGS -> {
                 setupUsbDebugView()
-                Intent().let {
-                    it.action = OverlayService.ACTION_SWITCH_USB_DEBUG_STATUS
-                    sendBroadcast(it)
-                }
+                sendBroadcast(
+                    Intent().apply {
+                        action = OverlayService.ACTION_SWITCH_USB_DEBUG_STATUS
+                    }
+                )
             }
         }
     }
@@ -267,8 +272,11 @@ class MainActivity : AppCompatActivity(){
     }
 
     private fun startOverlayService() {
-        val intent = Intent(this, OverlayService::class.java)
-        startService(intent)
+        startService(
+            Intent(this, OverlayService::class.java).apply {
+                putExtra(OverlayService.INTENT_ITEM_SELECTED_OVERLAY, selectSettingStateFlow.value.key)
+            }
+        )
         proceedSetup(next = SetupStatusType.WIFI_STATE_RECEIVER)
     }
 
@@ -303,34 +311,14 @@ class MainActivity : AppCompatActivity(){
         )
     }
 
-    private fun sendCommandToOverlayService(setting: String) {
-        Intent(this, OverlayService::class.java).apply {
-            action = "YOUR_CUSTOM_ACTION"
-        }.let { intent ->
-            startService(intent)
-        }
+    private fun sendCommandToOverlayService(setting: SelectedOverlayType) {
+        sendBroadcast(
+            Intent().apply {
+                action = OverlayService.ACTION_SELECT_OVERLAY_SETTING
+                putExtra(OverlayService.INTENT_ITEM_SELECTED_OVERLAY, setting.key)
+            }
+        )
     }
-
-    /**
-     * オーバーレイ preference を無効にする
-     */
-    private fun disableOverlayPreference() {
-        OverlayStateRepository().save(OverlayStateType.OFF)
-        _overlayStateFlow.update {
-            OverlayStateType.OFF
-        }
-    }
-
-    /**
-     * オーバーレイ preference を有効にする
-     */
-    private fun enableOverlayPreference() {
-        OverlayStateRepository().save(OverlayStateType.ON)
-        _overlayStateFlow.update {
-            OverlayStateType.ON
-        }
-    }
-
 
     /**
      * オーバーレイサービスを開始する
@@ -342,6 +330,7 @@ class MainActivity : AppCompatActivity(){
 
     private fun setupOverlayView() {
         _overlayStateFlow.update{ OverlayStateRepository().load() }
+        _selectSettingStateFlow.update { SelectedOverlayRepository().load() }
         proceedSetup(SetupStatusType.USB_DEBUG_VIEW)
     }
 
@@ -358,26 +347,39 @@ class MainActivity : AppCompatActivity(){
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O) // for RECEIVER_NOT_EXPORTED
     private fun setupOverlayReceiver() {
         mOverlayStatusReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                if(intent?.getBooleanExtra(KEY_OVERLAY_STATUS,false) == true) {
-                    enableOverlayPreference()
-                } else {
-                    disableOverlayPreference()
+                when (intent?.action) {
+                    ACTION_SWITCH_OVERLAY_STATUS -> {
+                        _overlayStateFlow.update {
+                            if(intent.getStringExtra(KEY_OVERLAY_STATUS) == OverlayStateType.ON.key) {
+                                OverlayStateType.ON
+                            } else {
+                                OverlayStateType.OFF
+                            }
+                        }
+                        _selectSettingStateFlow.update {
+                            intent.getStringExtra(KEY_SELECTED_OVERLAY)?.let {
+                                SelectedOverlayType.fromKey(it)
+                            } ?: SelectedOverlayType.USB_DEBUG
+                        }
+                    }
                 }
             }
         }
 
-        IntentFilter().apply {
-            addAction(ACTION_SWITCH_OVERLAY_STATUS)
-        }.let {
-            registerReceiver(mOverlayStatusReceiver, it)
-        }
+        registerReceiver(
+            mOverlayStatusReceiver,
+            IntentFilter().apply { addAction(ACTION_SWITCH_OVERLAY_STATUS) },
+            RECEIVER_NOT_EXPORTED
+        )
 
         proceedSetup(SetupStatusType.OVERLAY_PERMISSION)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O) // for RECEIVER_NOT_EXPORTED
     private fun setupWifiStateReceiver() {
         mWifiStateReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -394,11 +396,11 @@ class MainActivity : AppCompatActivity(){
             }
         }
 
-        IntentFilter().apply {
-            addAction(WifiManager.WIFI_STATE_CHANGED_ACTION)
-        }.let {
-            registerReceiver(mWifiStateReceiver, it)
-        }
+        registerReceiver(
+            mWifiStateReceiver,
+            IntentFilter().apply { addAction(WifiManager.WIFI_STATE_CHANGED_ACTION) },
+            RECEIVER_NOT_EXPORTED
+        )
 
         proceedSetup(SetupStatusType.FINISH)
     }

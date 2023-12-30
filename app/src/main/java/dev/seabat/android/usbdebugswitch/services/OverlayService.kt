@@ -13,8 +13,13 @@ import androidx.annotation.RequiresApi
 import dev.seabat.android.usbdebugswitch.MainActivity
 import dev.seabat.android.usbdebugswitch.MainActivity.Companion.ACTION_SWITCH_OVERLAY_STATUS
 import dev.seabat.android.usbdebugswitch.MainActivity.Companion.KEY_OVERLAY_STATUS
+import dev.seabat.android.usbdebugswitch.MainActivity.Companion.KEY_SELECTED_OVERLAY
 import dev.seabat.android.usbdebugswitch.view.OverlayView
 import dev.seabat.android.usbdebugswitch.R
+import dev.seabat.android.usbdebugswitch.constants.OverlayStateType
+import dev.seabat.android.usbdebugswitch.constants.SelectedOverlayType
+import dev.seabat.android.usbdebugswitch.repositories.OverlayStateRepository
+import dev.seabat.android.usbdebugswitch.repositories.SelectedOverlayRepository
 import dev.seabat.android.usbdebugswitch.utils.ServiceStatusChecker
 import dev.seabat.android.usbdebugswitch.utils.DeveloperOptionsLauncher
 
@@ -26,6 +31,8 @@ class OverlayService() : Service() {
         const val CHANNEL_ID = "OverlayserviceChannel"
         const val NOTIFICATION_ID = 2
         const val ACTION_SWITCH_USB_DEBUG_STATUS = "ACTION_SWITCH_USB_DEBUG_STATUS"
+        const val ACTION_SELECT_OVERLAY_SETTING = "ACTION_SELECT_OVERLAY_SETTING"
+        const val INTENT_ITEM_SELECTED_OVERLAY = "INTENT_ITEM_SELECTED_OVERLAY"
     }
 
 
@@ -44,16 +51,36 @@ class OverlayService() : Service() {
         setUpUsbDebugStatusReceiver()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O) // for RECEIVER_NOT_EXPORTED
     private fun setUpUsbDebugStatusReceiver() {
         mReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                mOverlay?.resetImage()}
+                when (intent?.action) {
+                    ACTION_SWITCH_USB_DEBUG_STATUS -> {
+                        mOverlay?.resetImage()
+                    }
+                    ACTION_SELECT_OVERLAY_SETTING -> {
+                        SelectedOverlayRepository().save(
+                            intent.getStringExtra(INTENT_ITEM_SELECTED_OVERLAY).let {
+                                if (it == null) {
+                                    SelectedOverlayType.USB_DEBUG
+                                } else {
+                                    SelectedOverlayType.fromKey(it)
+                                }
+                            }
+                        )
+                        sendOverlayStatusToActivity()
+                    }
+                    else -> {}
+                }
             }
-
-        IntentFilter().let {
-            it.addAction(ACTION_SWITCH_USB_DEBUG_STATUS)
-            baseContext?.registerReceiver(mReceiver, it)
         }
+        baseContext?.registerReceiver(mReceiver,
+            IntentFilter().apply {
+                addAction(ACTION_SWITCH_USB_DEBUG_STATUS)
+                addAction(ACTION_SELECT_OVERLAY_SETTING)
+            }, RECEIVER_NOT_EXPORTED
+        )
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -73,16 +100,18 @@ class OverlayService() : Service() {
             return START_NOT_STICKY;
         }
 
-        overlay()
+        doStartForeground {
+            overlay()
+            OverlayStateRepository().save(OverlayStateType.ON)
+            sendOverlayStatusToActivity()
+        }
 
-        doStartForeground()
-
-        return Service.START_NOT_STICKY
+        return START_NOT_STICKY
     }
 
 
     private fun overlay() {
-        mOverlay?:run{
+        mOverlay ?: run {
             mOverlay = OverlayView(this, object : OnSwitchUsbDebuggerListener {
                 override fun onSwitch() {
 //                    Intent(baseContext, MainActivity::class.java).let {
@@ -118,7 +147,7 @@ class OverlayService() : Service() {
     }
 
 
-    private fun doStartForeground() {
+    private fun doStartForeground(onStartService: () -> Unit) {
           // 通知タップ時に発行する Intent を作成
 
         var notification: Notification? =
@@ -135,11 +164,7 @@ class OverlayService() : Service() {
 
         startForeground(NOTIFICATION_ID, notification)
 
-        Intent().let {
-            it.action = ACTION_SWITCH_OVERLAY_STATUS
-            it.putExtra(KEY_OVERLAY_STATUS,true)
-            this.sendBroadcast(it)
-        }
+        onStartService()
     }
 
 
@@ -208,13 +233,9 @@ class OverlayService() : Service() {
         }
 
         // サービスを停止
-        doStopForeground()
-
-        // Activity にオーバーレイOFFを通知する
-        Intent().let {
-            it.action = ACTION_SWITCH_OVERLAY_STATUS
-            it.putExtra(KEY_OVERLAY_STATUS,false)
-            this.sendBroadcast(it)
+        doStopForeground {
+            OverlayStateRepository().save(OverlayStateType.OFF)
+            sendOverlayStatusToActivity()
         }
 
         // ブロードキャストレシーバーの finalize
@@ -233,13 +254,23 @@ class OverlayService() : Service() {
         baseContext?.unregisterReceiver(mReceiver)
     }
 
+    private fun sendOverlayStatusToActivity() {
+        sendBroadcast(
+            Intent().apply {
+                action = ACTION_SWITCH_OVERLAY_STATUS
+                putExtra(KEY_OVERLAY_STATUS,OverlayStateRepository().load().key)
+                putExtra(KEY_SELECTED_OVERLAY, SelectedOverlayRepository().load().key)
+            }
+        )
+    }
 
-    private fun doStopForeground() {
+    private fun doStopForeground(onStopService: () -> Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             stopForeground(Service.STOP_FOREGROUND_REMOVE or Service.STOP_FOREGROUND_DETACH)
         } else {
             stopForeground(true)
         }
+        onStopService()
     }
 
 

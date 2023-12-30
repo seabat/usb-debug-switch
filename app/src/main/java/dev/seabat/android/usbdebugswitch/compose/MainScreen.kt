@@ -50,7 +50,7 @@ fun MainScreen(
     onInternetSwitch: () -> Unit,
     onOverlaySwitch: () -> Unit,
     onUsbDebugSwitch: () -> Unit,
-    onToggleSetting: (String) -> Unit
+    onToggleSetting: (SelectedOverlayType) -> Unit
 ) {
     val internetState by internetStateFlow.collectAsState()
     val overlayState by overlayStateFlow.collectAsState()
@@ -120,7 +120,7 @@ fun OverlaySettingCard(
     overlayState: OverlayStateType,
     selectedSettingState: SelectedOverlayType,
     onSwitch: () -> Unit,
-    onToggleSetting: (String) -> Unit
+    onToggleSetting: (SelectedOverlayType) -> Unit
 ) {
     OutlinedCard(
         modifier = Modifier
@@ -156,10 +156,18 @@ fun OverlaySettingCard(
                         RadioButton(
                             colors = RadioButtonDefaults.colors(selectedColor = Color(0xFF75565c)),
                             selected = settingName == when(selectedSettingState) {
-                                SelectedOverlayType.USB_DEBUG -> stringResource(id = R.string.title_setting_usb_debug)
-                                SelectedOverlayType.INTERNET -> stringResource(id = R.string.title_setting_internet)
+                                SelectedOverlayType.USB_DEBUG -> radioOptions[0]
+                                SelectedOverlayType.INTERNET -> radioOptions[1]
                             },
-                            onClick = { onToggleSetting(settingName) }
+                            onClick = {
+                                onToggleSetting(
+                                    when(settingName) {
+                                        radioOptions[0] -> SelectedOverlayType.USB_DEBUG
+                                        radioOptions[1] -> SelectedOverlayType.INTERNET
+                                        else -> SelectedOverlayType.USB_DEBUG
+                                    }
+                                )
+                            }
                         )
                         Text(
                             text = settingName,

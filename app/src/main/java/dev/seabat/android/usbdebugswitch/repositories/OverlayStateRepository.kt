@@ -13,7 +13,7 @@ class OverlayStateRepository(
     /**
      * オーバーレイON/OFF状態を読み込む
      *
-     * @return "ON", "OFF"
+     * @return
      */
     fun load(): OverlayStateType {
         val preferenceData = PreferenceManager

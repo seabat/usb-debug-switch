@@ -13,15 +13,16 @@ class SelectedOverlayRepository(
     /**
      * 選択したオーバーレイ種別を読み込む
      *
-     * @return "ON", "OFF"
+     * @return
      */
-    fun load(): String {
-        return PreferenceManager
+    fun load(): SelectedOverlayType {
+        val preferenceData = PreferenceManager
             .getDefaultSharedPreferences(context)
             .getString(
                 "pref_overlay_setting",
                 SelectedOverlayType.USB_DEBUG.key
             ) ?: SelectedOverlayType.USB_DEBUG.key
+        return SelectedOverlayType.fromKey(preferenceData)
     }
 
     fun save(overlayType: SelectedOverlayType) {

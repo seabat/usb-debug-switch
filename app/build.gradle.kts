@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "dev.seabat.android.usbdebugswitch"
-        minSdk = 21
+        minSdk = 26
         targetSdk = 33
         versionCode = 5
         versionName = "0.13.0"
