@@ -1,4 +1,4 @@
-package dev.seabat.android.usbdebugswitch
+package dev.seabat.android.usbdebugswitch.services
 
 import android.app.*
 import android.content.BroadcastReceiver
@@ -10,8 +10,11 @@ import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import androidx.annotation.RequiresApi
+import dev.seabat.android.usbdebugswitch.MainActivity
 import dev.seabat.android.usbdebugswitch.MainActivity.Companion.ACTION_SWITCH_OVERLAY_STATUS
 import dev.seabat.android.usbdebugswitch.MainActivity.Companion.KEY_OVERLAY_STATUS
+import dev.seabat.android.usbdebugswitch.view.OverlayView
+import dev.seabat.android.usbdebugswitch.R
 import dev.seabat.android.usbdebugswitch.utils.ServiceStatusChecker
 import dev.seabat.android.usbdebugswitch.utils.DeveloperOptionsLauncher
 
@@ -63,8 +66,8 @@ class OverlayService() : Service() {
                 getBaseContext(),
                 "OverlayService"))
         {
-            // 既に サービスがフォアグラウンドの場合は、startForground() をコールしない。
-            // startForground() のコール自体は何回コールしても問題ないが、
+            // 既に サービスがフォアグラウンドの場合は、startForeground() をコールしない。
+            // startForeground() のコール自体は何回コールしても問題ないが、
             // notification への通知がその度に発生するのでUI的にうざいので、
             // 通知はフォアグラウンドに移行する際の一回でよい。
             return START_NOT_STICKY;

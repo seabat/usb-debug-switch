@@ -134,7 +134,10 @@ fun OverlaySettingCard(title: String, state: String, onSwitch: () -> Unit) {
                     style = MaterialTheme.typography.headlineSmall
                 )
 
-                val radioOptions = listOf("USBデバッグ","インターネット接続")
+                val radioOptions = listOf(
+                    stringResource(id = R.string.title_setting_usb_debug),
+                    stringResource(id = R.string.title_setting_internet)
+                )
                 var selectedOption by remember { mutableStateOf(radioOptions[0]) }
 
                 radioOptions.forEach { settingName ->

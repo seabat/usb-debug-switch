@@ -1,4 +1,4 @@
-package dev.seabat.android.usbdebugswitch
+package dev.seabat.android.usbdebugswitch.view
 
 import android.content.Context
 import android.graphics.PixelFormat
@@ -8,6 +8,8 @@ import android.os.Handler
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
+import dev.seabat.android.usbdebugswitch.R
+import dev.seabat.android.usbdebugswitch.services.OverlayService
 import dev.seabat.android.usbdebugswitch.utils.UsbDebugStatusChecker
 
 
@@ -92,7 +94,8 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchU
                         val centerX = x - (displaySize.x / 2)
                         var centerY = y - (displaySize.y / 2)
 
-                        Log.d(TAG,
+                        Log.d(
+                            TAG,
                             "tapX:" + x + " tapY:" + y + " fromCenterX:" + centerX + " fromCenterY:" + centerY)
 
                         // 微調整

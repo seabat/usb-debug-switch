@@ -18,6 +18,7 @@ import dev.seabat.android.usbdebugswitch.compose.MainScreen
 import dev.seabat.android.usbdebugswitch.dialog.PermissionWarningDialog
 import dev.seabat.android.usbdebugswitch.repositories.InternetSettingRepository
 import dev.seabat.android.usbdebugswitch.repositories.OverlaySettingRepository
+import dev.seabat.android.usbdebugswitch.services.OverlayService
 import dev.seabat.android.usbdebugswitch.utils.CheckNotificationPermission
 import dev.seabat.android.usbdebugswitch.utils.CheckOverlayPermission
 import dev.seabat.android.usbdebugswitch.utils.DeveloperOptionsLauncher
@@ -38,7 +39,7 @@ class MainActivity : AppCompatActivity(){
         const val KEY_OVERLAY_STATUS = "KEY_OVERLAY_STATUS"
     }
 
-    private lateinit var mReceiver: BroadcastReceiver
+    private lateinit var mOverlayStatusReceiver: BroadcastReceiver
     private lateinit var mWifiStateReceiver: BroadcastReceiver
 
     enum class SetupStatusType(val order: Int) {
@@ -340,7 +341,7 @@ class MainActivity : AppCompatActivity(){
 
 
     private fun setupOverlayReceiver() {
-        mReceiver = object : BroadcastReceiver() {
+        mOverlayStatusReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if(intent?.getBooleanExtra(KEY_OVERLAY_STATUS,false) == true) {
                     enableOverlayPreference()
@@ -353,7 +354,7 @@ class MainActivity : AppCompatActivity(){
         IntentFilter().apply {
             addAction(ACTION_SWITCH_OVERLAY_STATUS)
         }.let {
-            registerReceiver(mReceiver, it)
+            registerReceiver(mOverlayStatusReceiver, it)
         }
 
         proceedSetup(SetupStatusType.OVERLAY_PERMISSION)
@@ -385,7 +386,7 @@ class MainActivity : AppCompatActivity(){
     }
 
     private fun finalizeReceiver()  {
-        unregisterReceiver(mReceiver)
+        unregisterReceiver(mOverlayStatusReceiver)
         unregisterReceiver(mWifiStateReceiver)
     }
 }
