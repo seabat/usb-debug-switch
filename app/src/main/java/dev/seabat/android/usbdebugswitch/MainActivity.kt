@@ -43,8 +43,10 @@ class MainActivity : AppCompatActivity(){
         const val TAG_GOTO_OVERLAY_SETTING = "TAG_GOTO_OVERLAY_SETTING"
         const val TAG_GOTO_APP_SETTING = "TAG_GOTO_APP_SETTING"
         const val ACTION_SWITCH_OVERLAY_STATUS = "ACTION_SWITCH_OVERLAY_STATUS"
+        const val ACTION_SWITCH_INTERNET = "ACTION_SWITCH_INTERNET"
         const val KEY_OVERLAY_STATUS = "KEY_OVERLAY_STATUS"
         const val KEY_SELECTED_OVERLAY = "KEY_SELECTED_OVERLAY"
+        const val KEY_INTERNET_STATUS = "KEY_INTERNET_STATUS"
     }
 
     private lateinit var mOverlayStatusReceiver: BroadcastReceiver
@@ -52,19 +54,20 @@ class MainActivity : AppCompatActivity(){
 
     enum class SetupStatusType(val order: Int) {
         READY(0),
-        OVERLAY_VIEW(1),
-        USB_DEBUG_VIEW(2), // オーバーレイ表示領域のセットアップ
-        NOTIFICATION_PERMISSION(3),
-        OVERLAY_RECEIVER(4),
-        OVERLAY_PERMISSION(5),
-        OVERLAY_SERVICE(6), // 通知パーミッションのセットアップ
-        WIFI_STATE_RECEIVER(7),
-        FINISH(8),
+        INTERNET_VIEW(1),
+        OVERLAY_VIEW(2),
+        USB_DEBUG_VIEW(3), // オーバーレイ表示領域のセットアップ
+        NOTIFICATION_PERMISSION(4),
+        OVERLAY_RECEIVER(5),
+        OVERLAY_PERMISSION(6),
+        OVERLAY_SERVICE(7), // 通知パーミッションのセットアップ
+        WIFI_STATE_RECEIVER(8),
+        FINISH(9),
     }
 
     private var setupStatus = SetupStatusType.READY
 
-    private val requestPermissionLauncher = registerForActivityResult(
+    private val requestNotificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
         if (granted) {
@@ -114,7 +117,7 @@ class MainActivity : AppCompatActivity(){
                     DeveloperOptionsLauncher.startForResultFromActivity(this@MainActivity)
                 },
                 onInternetSwitch = {
-                    InternetStateRepository().setEnabled(false, this)
+                    InternetStateRepository().setEnabled(it == InternetStateType.ON, this)
                 },
                 onToggleSetting = {
                     sendCommandToOverlayService(it)
@@ -137,7 +140,7 @@ class MainActivity : AppCompatActivity(){
         }
 
         // セットアップ開始
-        proceedSetup(SetupStatusType.OVERLAY_VIEW)
+        proceedSetup(SetupStatusType.INTERNET_VIEW)
     }
 
     override fun onStart() {
@@ -171,6 +174,7 @@ class MainActivity : AppCompatActivity(){
             // 「開発者向けオプション」画面から戻った本アプリに戻った場合
             REQUEST_APPLICATION_DEVELOPMENT_SETTINGS -> {
                 setupUsbDebugView()
+                // オーバーレイサービスに「開発者向けオプション」画面から戻ったことを通知し、オーバーレイアイコンを変更してもらう
                 sendBroadcast(
                     Intent().apply {
                         action = OverlayService.ACTION_SWITCH_USB_DEBUG_STATUS
@@ -221,6 +225,9 @@ class MainActivity : AppCompatActivity(){
             SetupStatusType.READY -> {
                 // Do nothing
             }
+            SetupStatusType.INTERNET_VIEW -> {
+                setupInternetView()
+            }
             SetupStatusType.OVERLAY_VIEW -> {
                 setupOverlayView()
             }
@@ -228,7 +235,7 @@ class MainActivity : AppCompatActivity(){
                 setupUsbDebugView()
             }
             SetupStatusType.NOTIFICATION_PERMISSION -> {
-                requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                requestNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
             }
             SetupStatusType.OVERLAY_RECEIVER -> {
                 setupOverlayReceiver()
@@ -346,6 +353,16 @@ class MainActivity : AppCompatActivity(){
         proceedSetup(SetupStatusType.NOTIFICATION_PERMISSION)
     }
 
+    private fun setupInternetView() {
+        _internetStateFlow.update {
+            if (InternetStateRepository().isEnabled()) {
+                InternetStateType.ON
+            } else {
+                InternetStateType.OFF
+            }
+        }
+        proceedSetup(SetupStatusType.OVERLAY_VIEW)
+    }
 
     @RequiresApi(Build.VERSION_CODES.O) // for RECEIVER_NOT_EXPORTED
     private fun setupOverlayReceiver() {
@@ -366,13 +383,22 @@ class MainActivity : AppCompatActivity(){
                             } ?: SelectedOverlayType.USB_DEBUG
                         }
                     }
+                    ACTION_SWITCH_INTERNET -> {
+                        InternetStateRepository().setEnabled(
+                            intent.getBooleanExtra(KEY_INTERNET_STATUS, false),
+                            this@MainActivity
+                        )
+                    }
                 }
             }
         }
 
         registerReceiver(
             mOverlayStatusReceiver,
-            IntentFilter().apply { addAction(ACTION_SWITCH_OVERLAY_STATUS) },
+            IntentFilter().apply {
+                addAction(ACTION_SWITCH_OVERLAY_STATUS)
+                addAction(ACTION_SWITCH_INTERNET)
+            },
             RECEIVER_NOT_EXPORTED
         )
 
@@ -392,6 +418,12 @@ class MainActivity : AppCompatActivity(){
                             _internetStateFlow.update { InternetStateType.OFF }
                         }
                     }
+                    // オーバーレイサービスに Wi-Fi の状態が変化したことを通知し、オーバーレイアイコンを変更してもらう
+                    sendBroadcast(
+                        Intent().apply {
+                            action = OverlayService.ACTION_SWITCH_INTERNET_STATUS
+                        }
+                    )
                 }
             }
         }

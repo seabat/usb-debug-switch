@@ -47,7 +47,7 @@ fun MainScreen(
     overlayStateFlow: StateFlow<OverlayStateType>,
     usbDebugStateFlow: StateFlow<UsbDebugStateType>,
     selectedSettingStateFlow: StateFlow<SelectedOverlayType>,
-    onInternetSwitch: () -> Unit,
+    onInternetSwitch: (InternetStateType) -> Unit,
     onOverlaySwitch: () -> Unit,
     onUsbDebugSwitch: () -> Unit,
     onToggleSetting: (SelectedOverlayType) -> Unit
@@ -102,13 +102,21 @@ fun MainScreen(
             SettingCard(
                 title =  stringResource(id = R.string.title_setting_usb_debug),
                 onOff =  usbDebugState.key,
-                onSwitch = onUsbDebugSwitch
+                onSwitch = { onUsbDebugSwitch() }
             )
 
             SettingCard(
                 title =  stringResource(id = R.string.title_setting_internet),
                 onOff =  internetState.key,
-                onSwitch = onInternetSwitch
+                onSwitch = {
+                    onInternetSwitch(
+                        if (it == "on") {
+                            InternetStateType.OFF
+                        } else {
+                            InternetStateType.ON
+                        }
+                    )
+                }
             )
         }
     }
@@ -191,7 +199,7 @@ fun OverlaySettingCard(
 }
 
 @Composable
-fun SettingCard(title: String, onOff: String, onSwitch: () -> Unit) {
+fun SettingCard(title: String, onOff: String, onSwitch: (String) -> Unit) {
     OutlinedCard(
         modifier = Modifier
             .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
@@ -216,7 +224,7 @@ fun SettingCard(title: String, onOff: String, onSwitch: () -> Unit) {
             )
             Switch(
                 checked = onOff == "on",
-                onCheckedChange = { onSwitch() },
+                onCheckedChange = { onSwitch(onOff) },
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = Color(0xFFFFFFFF),
                     checkedTrackColor = Color(0xFF75565c)
