@@ -3,33 +3,32 @@ package dev.seabat.android.usbdebugswitch.repositories
 import android.content.Context
 import androidx.preference.PreferenceManager
 import dev.seabat.android.usbdebugswitch.MainApplication
-import dev.seabat.android.usbdebugswitch.R
-import kotlinx.coroutines.flow.update
+import dev.seabat.android.usbdebugswitch.constants.OverlayStateType
 
-class OverlaySettingRepository(
+class OverlayStateRepository(
     private val context: Context = MainApplication.instance
 ) {
 
 
     /**
-     * オーバーレイ設定を読み込む
+     * オーバーレイON/OFF状態を読み込む
      *
      * @return "ON", "OFF"
      */
-    fun load(): String {
-        return PreferenceManager
+    fun load(): OverlayStateType {
+        val preferenceData = PreferenceManager
             .getDefaultSharedPreferences(context)
             .getString(
-                "pref_setting_overlay",
-                context.getString(R.string.setting_overlay_off
-                )
-            ) ?: context.getString(R.string.setting_overlay_off)
+                "pref_overlay_state",
+                OverlayStateType.OFF.key
+            ) ?: OverlayStateType.OFF.key
+        return OverlayStateType.fromKey(preferenceData)
     }
 
-    fun save(onOff: String) {
+    fun save(onOff: OverlayStateType) {
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
         sharedPref.edit().let {editor ->
-            editor.putString("pref_setting_overlay", onOff)
+            editor.putString("pref_overlay_state", onOff.key)
             editor.commit() // commit を忘れずに！
         }
     }
@@ -38,6 +37,6 @@ class OverlaySettingRepository(
      * オーバーレイが有効か
      */
     fun isEnabled(): Boolean {
-        return load() == context.getString(R.string.setting_overlay_on)
+        return load() == OverlayStateType.ON
     }
 }

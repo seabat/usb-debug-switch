@@ -15,9 +15,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import dev.seabat.android.usbdebugswitch.compose.MainScreen
+import dev.seabat.android.usbdebugswitch.constants.InternetStateType
+import dev.seabat.android.usbdebugswitch.constants.OverlayStateType
+import dev.seabat.android.usbdebugswitch.constants.SelectedOverlayType
+import dev.seabat.android.usbdebugswitch.constants.UsbDebugStateType
 import dev.seabat.android.usbdebugswitch.dialog.PermissionWarningDialog
-import dev.seabat.android.usbdebugswitch.repositories.InternetSettingRepository
-import dev.seabat.android.usbdebugswitch.repositories.OverlaySettingRepository
+import dev.seabat.android.usbdebugswitch.repositories.InternetStateRepository
+import dev.seabat.android.usbdebugswitch.repositories.OverlayStateRepository
 import dev.seabat.android.usbdebugswitch.services.OverlayService
 import dev.seabat.android.usbdebugswitch.utils.CheckNotificationPermission
 import dev.seabat.android.usbdebugswitch.utils.CheckOverlayPermission
@@ -70,14 +74,17 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
-    private val _internetStateFlow = MutableStateFlow("")
+    private val _internetStateFlow = MutableStateFlow(InternetStateType.OFF)
     private val internetStateFlow = _internetStateFlow.asStateFlow()
 
-    private val _overlayStateFlow = MutableStateFlow("")
+    private val _overlayStateFlow = MutableStateFlow(OverlayStateType.OFF)
     private val overlayStateFlow = _overlayStateFlow.asStateFlow()
 
-    private val _usbDebugStateFlow = MutableStateFlow("")
+    private val _usbDebugStateFlow = MutableStateFlow(UsbDebugStateType.OFF)
     private val usbDebugStateFlow = _usbDebugStateFlow.asStateFlow()
+
+    private val _selectSettingStateFlow = MutableStateFlow(SelectedOverlayType.USB_DEBUG)
+    private val selectSettingStateFlow = _selectSettingStateFlow.asStateFlow()
 
     var appOpsManager: AppOpsManager? = null
 
@@ -90,8 +97,9 @@ class MainActivity : AppCompatActivity(){
                 internetStateFlow = internetStateFlow,
                 overlayStateFlow = overlayStateFlow,
                 usbDebugStateFlow = usbDebugStateFlow,
+                selectedSettingStateFlow = selectSettingStateFlow,
                 onOverlaySwitch = {
-                    if (!OverlaySettingRepository().isEnabled()) {
+                    if (!OverlayStateRepository().isEnabled()) {
                         tryToStartOverlayService()
                     } else {
                         stopOverlayService()
@@ -102,7 +110,10 @@ class MainActivity : AppCompatActivity(){
                     DeveloperOptionsLauncher.startForResultFromActivity(this@MainActivity)
                 },
                 onInternetSwitch = {
-                    InternetSettingRepository().setEnabled(false, this)
+                    InternetStateRepository().setEnabled(false, this)
+                },
+                onToggleSetting = {
+                    sendCommandToOverlayService(it)
                 }
             )
         }
@@ -111,7 +122,7 @@ class MainActivity : AppCompatActivity(){
             TAG_GOTO_OVERLAY_SETTING,
             this
         ) { _, _ ->
-            launchOverlaySetting()
+            launchOverlayStateSetting()
         }
 
         supportFragmentManager.setFragmentResultListener(
@@ -167,7 +178,7 @@ class MainActivity : AppCompatActivity(){
     /**
      * オーバーレイの設定画面を起動する
      */
-    private fun launchOverlaySetting() {
+    private fun launchOverlayStateSetting() {
         // 設定画面を起動する
         // 設定->アプリ->歯車アイコン->他のアプリの上に重ねて表示
         val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
@@ -238,8 +249,7 @@ class MainActivity : AppCompatActivity(){
      * Preference に "ON" が格納されている場合は、オーバーレイサービスの開始を試みる。
      */
     private fun setupOverlayPermission() {
-        _overlayStateFlow.update{ OverlaySettingRepository().load() }
-        if (OverlaySettingRepository().isEnabled()) {
+        if (OverlayStateRepository().isEnabled()) {
             CheckOverlayPermission(this)(
                 enabled = {
                     proceedSetup(next = SetupStatusType.OVERLAY_SERVICE)
@@ -293,13 +303,21 @@ class MainActivity : AppCompatActivity(){
         )
     }
 
+    private fun sendCommandToOverlayService(setting: String) {
+        Intent(this, OverlayService::class.java).apply {
+            action = "YOUR_CUSTOM_ACTION"
+        }.let { intent ->
+            startService(intent)
+        }
+    }
+
     /**
      * オーバーレイ preference を無効にする
      */
     private fun disableOverlayPreference() {
-        OverlaySettingRepository().save(getString(R.string.setting_overlay_off))
+        OverlayStateRepository().save(OverlayStateType.OFF)
         _overlayStateFlow.update {
-            getString(R.string.setting_overlay_off)
+            OverlayStateType.OFF
         }
     }
 
@@ -307,9 +325,9 @@ class MainActivity : AppCompatActivity(){
      * オーバーレイ preference を有効にする
      */
     private fun enableOverlayPreference() {
-        OverlaySettingRepository().save(getString(R.string.setting_usb_debug_on))
+        OverlayStateRepository().save(OverlayStateType.ON)
         _overlayStateFlow.update {
-            getString(R.string.setting_usb_debug_on)
+            OverlayStateType.ON
         }
     }
 
@@ -323,16 +341,16 @@ class MainActivity : AppCompatActivity(){
     }
 
     private fun setupOverlayView() {
-        _overlayStateFlow.update { getString(R.string.setting_overlay_off) }
+        _overlayStateFlow.update{ OverlayStateRepository().load() }
         proceedSetup(SetupStatusType.USB_DEBUG_VIEW)
     }
 
     private fun setupUsbDebugView() {
         _usbDebugStateFlow.update {
             if (UsbDebugStatusChecker.isUsbDebugEnabled(this)) {
-                getString(R.string.setting_usb_debug_on)
+                UsbDebugStateType.ON
             } else {
-                getString(R.string.setting_usb_debug_off)
+                UsbDebugStateType.OFF
             }
         }
 
@@ -366,10 +384,10 @@ class MainActivity : AppCompatActivity(){
                 if (intent?.action == WifiManager.WIFI_STATE_CHANGED_ACTION) {
                     when (intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, WifiManager.WIFI_STATE_UNKNOWN)) {
                         WifiManager.WIFI_STATE_ENABLED -> {
-                            _internetStateFlow.update { getString(R.string.setting_internet_on) }
+                            _internetStateFlow.update { InternetStateType.ON }
                         }
                         WifiManager.WIFI_STATE_DISABLED -> {
-                            _internetStateFlow.update { getString(R.string.setting_internet_off) }
+                            _internetStateFlow.update { InternetStateType.OFF }
                         }
                     }
                 }

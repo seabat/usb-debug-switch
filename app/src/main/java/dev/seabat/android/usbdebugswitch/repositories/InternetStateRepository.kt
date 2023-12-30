@@ -9,7 +9,7 @@ import android.provider.Settings
 import dev.seabat.android.usbdebugswitch.MainApplication
 
 
-class InternetSettingRepository(
+class InternetStateRepository(
     private val context: Context = MainApplication.instance
 ) {
    fun setEnabled(enable: Boolean, activity: Activity) {

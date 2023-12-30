@@ -25,9 +25,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,22 +33,29 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.seabat.android.usbdebugswitch.R
+import dev.seabat.android.usbdebugswitch.constants.InternetStateType
+import dev.seabat.android.usbdebugswitch.constants.OverlayStateType
+import dev.seabat.android.usbdebugswitch.constants.SelectedOverlayType
+import dev.seabat.android.usbdebugswitch.constants.UsbDebugStateType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    internetStateFlow: StateFlow<String>,
-    overlayStateFlow: StateFlow<String>,
-    usbDebugStateFlow: StateFlow<String>,
+    internetStateFlow: StateFlow<InternetStateType>,
+    overlayStateFlow: StateFlow<OverlayStateType>,
+    usbDebugStateFlow: StateFlow<UsbDebugStateType>,
+    selectedSettingStateFlow: StateFlow<SelectedOverlayType>,
     onInternetSwitch: () -> Unit,
     onOverlaySwitch: () -> Unit,
-    onUsbDebugSwitch: () -> Unit
+    onUsbDebugSwitch: () -> Unit,
+    onToggleSetting: (String) -> Unit
 ) {
     val internetState by internetStateFlow.collectAsState()
     val overlayState by overlayStateFlow.collectAsState()
     val usbDebugState by usbDebugStateFlow.collectAsState()
+    val selectedSettingState by selectedSettingStateFlow.collectAsState()
 
     Scaffold(
         topBar = {
@@ -89,19 +93,21 @@ fun MainScreen(
 
             OverlaySettingCard(
                 title =  stringResource(id = R.string.title_setting_overlay),
-                state =  overlayState,
-                onSwitch = onOverlaySwitch
+                overlayState =  overlayState,
+                selectedSettingState = selectedSettingState,
+                onSwitch = onOverlaySwitch,
+                onToggleSetting = onToggleSetting
             )
 
             SettingCard(
                 title =  stringResource(id = R.string.title_setting_usb_debug),
-                state =  usbDebugState,
+                onOff =  usbDebugState.key,
                 onSwitch = onUsbDebugSwitch
             )
 
             SettingCard(
                 title =  stringResource(id = R.string.title_setting_internet),
-                state =  internetState,
+                onOff =  internetState.key,
                 onSwitch = onInternetSwitch
             )
         }
@@ -109,7 +115,13 @@ fun MainScreen(
 }
 
 @Composable
-fun OverlaySettingCard(title: String, state: String, onSwitch: () -> Unit) {
+fun OverlaySettingCard(
+    title: String,
+    overlayState: OverlayStateType,
+    selectedSettingState: SelectedOverlayType,
+    onSwitch: () -> Unit,
+    onToggleSetting: (String) -> Unit
+) {
     OutlinedCard(
         modifier = Modifier
             .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
@@ -138,14 +150,16 @@ fun OverlaySettingCard(title: String, state: String, onSwitch: () -> Unit) {
                     stringResource(id = R.string.title_setting_usb_debug),
                     stringResource(id = R.string.title_setting_internet)
                 )
-                var selectedOption by remember { mutableStateOf(radioOptions[0]) }
 
                 radioOptions.forEach { settingName ->
                     Row(modifier = Modifier.height(30.dp), verticalAlignment = Alignment.CenterVertically) {
                         RadioButton(
                             colors = RadioButtonDefaults.colors(selectedColor = Color(0xFF75565c)),
-                            selected = (settingName == selectedOption),
-                            onClick = { selectedOption = settingName }
+                            selected = settingName == when(selectedSettingState) {
+                                SelectedOverlayType.USB_DEBUG -> stringResource(id = R.string.title_setting_usb_debug)
+                                SelectedOverlayType.INTERNET -> stringResource(id = R.string.title_setting_internet)
+                            },
+                            onClick = { onToggleSetting(settingName) }
                         )
                         Text(
                             text = settingName,
@@ -157,7 +171,7 @@ fun OverlaySettingCard(title: String, state: String, onSwitch: () -> Unit) {
             }
 
             Switch(
-                checked = state == "ON",
+                checked = overlayState ==  OverlayStateType.ON,
                 onCheckedChange = { onSwitch() },
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = Color(0xFFFFFFFF),
@@ -169,7 +183,7 @@ fun OverlaySettingCard(title: String, state: String, onSwitch: () -> Unit) {
 }
 
 @Composable
-fun SettingCard(title: String, state: String, onSwitch: () -> Unit) {
+fun SettingCard(title: String, onOff: String, onSwitch: () -> Unit) {
     OutlinedCard(
         modifier = Modifier
             .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
@@ -193,7 +207,7 @@ fun SettingCard(title: String, state: String, onSwitch: () -> Unit) {
                 style = MaterialTheme.typography.headlineSmall
             )
             Switch(
-                checked = state == "ON",
+                checked = onOff == "on",
                 onCheckedChange = { onSwitch() },
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = Color(0xFFFFFFFF),
@@ -208,11 +222,13 @@ fun SettingCard(title: String, state: String, onSwitch: () -> Unit) {
 @Composable
 fun MainScreenPreview() {
     MainScreen(
-        MutableStateFlow("ON"),
-        MutableStateFlow(""),
-        MutableStateFlow(""),
+        MutableStateFlow(InternetStateType.OFF),
+        MutableStateFlow(OverlayStateType.OFF),
+        MutableStateFlow(UsbDebugStateType.OFF),
+        MutableStateFlow(SelectedOverlayType.USB_DEBUG),
         onInternetSwitch = {},
         onOverlaySwitch = {},
         onUsbDebugSwitch = {},
+        onToggleSetting = {}
     )
 }
