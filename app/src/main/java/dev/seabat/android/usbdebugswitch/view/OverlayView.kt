@@ -1,4 +1,4 @@
-package dev.seabat.android.usbdebugswitch
+package dev.seabat.android.usbdebugswitch.view
 
 import android.content.Context
 import android.graphics.PixelFormat
@@ -8,10 +8,15 @@ import android.os.Handler
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
+import dev.seabat.android.usbdebugswitch.R
+import dev.seabat.android.usbdebugswitch.constants.SelectedOverlayType
+import dev.seabat.android.usbdebugswitch.repositories.InternetStateRepository
+import dev.seabat.android.usbdebugswitch.repositories.SelectedOverlayRepository
+import dev.seabat.android.usbdebugswitch.services.OverlayService
 import dev.seabat.android.usbdebugswitch.utils.UsbDebugStatusChecker
 
 
-class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchUsbDebuggerListener) {
+class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchListener) {
 
 
     private val mOverlayView: ViewGroup
@@ -69,7 +74,14 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchU
             if (!mIsLongClick) {
                 imageView.visibility = View.INVISIBLE
                 Handler().postDelayed({ imageView.visibility = View.VISIBLE }, 500L)
-                mListener.onSwitch()
+                when(SelectedOverlayRepository().load()) {
+                    SelectedOverlayType.USB_DEBUG -> {
+                        mListener.onUsbDebugSwitch()
+                    }
+                    SelectedOverlayType.INTERNET -> {
+                        mListener.onInternetSwitch()
+                    }
+                }
             }
         }
 
@@ -92,7 +104,8 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchU
                         val centerX = x - (displaySize.x / 2)
                         var centerY = y - (displaySize.y / 2)
 
-                        Log.d(TAG,
+                        Log.d(
+                            TAG,
                             "tapX:" + x + " tapY:" + y + " fromCenterX:" + centerX + " fromCenterY:" + centerY)
 
                         // 微調整
@@ -127,10 +140,21 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchU
      */
     private fun registerImage() {
         val imageView = mOverlayView.findViewById(R.id.debug_onoff_image) as ImageView
-        if (UsbDebugStatusChecker.isUsbDebugEnabled(mContext)) {
-            imageView.setImageResource(R.mipmap.ic_on)
-        } else {
-            imageView.setImageResource(R.mipmap.ic_off)
+        when(SelectedOverlayRepository().load()) {
+            SelectedOverlayType.USB_DEBUG -> {
+                if (UsbDebugStatusChecker.isUsbDebugEnabled(mContext)) {
+                    imageView.setImageResource(R.mipmap.ic_on)
+                } else {
+                    imageView.setImageResource(R.mipmap.ic_off)
+                }
+            }
+            SelectedOverlayType.INTERNET -> {
+                if (InternetStateRepository().isEnabled()) {
+                    imageView.setImageResource(R.mipmap.ic_online)
+                } else {
+                    imageView.setImageResource(R.mipmap.ic_offline)
+                }
+            }
         }
     }
 
