@@ -1,27 +1,23 @@
-# UsbDebugSwitch
-USB デバッグ の ON・ OFF 状態を常に端末の画面に表示し、素早くON・ OFF を切り替えられる Android アプリです。
+# Usb Debug Switch
+USB デバッグ の ON・ OFF 状態を常に端末の画面に表示し、素早く ON・OFF を切り替えられる Android アプリです。
+v0.14.0 からインターネット接続(Wi-Fi接続のみ)の ON・OFF 切り替え機能を追加しました。
 
 使い方
 ----------
 
-「画面オーバーレイ」を ON に設定するとオーバーレイアイコンが表示されます。オーバーレイアイコンは USB デバッグの有効・無効状態を示します。  
+「画面オーバーレイ」設定において、「USB デバッグ」を選択した状態で トグルスイッチを ON に設定するとオーバーレイアイコンが表示されます。オーバーレイアイコンは USB デバッグの有効・無効状態を示します。  
 <img src="images/screenshot_app_on.png" width="200">  <img src="images/screenshot_app_off.png" width="200">
 
-オーバーレイアイコンは本アプリがバックグラウンドに移動しても、本アプリが終了しても常に表示されます。  
+オーバーレイアイコンは本アプリがバックグラウンドに移動しても常に表示されます。  
 <img src="images/screenshot_home_on.png" width="200">  <img src="images/screenshot_home_off.png" width="200">
 
-オーバーレイアイコンをタップすると設定アプリが起動され、USBデバッグの有効/無効を切り替えることができます。  
+オーバーレイアイコンをタップすると開発者向けオプション画面が起動し、USBデバッグの有効/無効を切り替えることができます。  
+【注意】予め開発者向けオプションを有効にしてください。([開発者向けオプションを有効にする方法](https://developer.android.com/studio/debug/dev-options?hl=ja#enable))  
 <img src="images/screenshot_settings.png" width="200">
 
 オーバーレイアイコンはドラッグ＆ドロップで任意の場所に移動させることができます。
 <img src="images/screenshot_home_on_top.png" width="200">
 
-開発メモ
-----------
-
-* 「他のアプリより上に重ねて表示」の権限を許可するためには「Settings.ACTION_MANAGE_OVERLAY_PERMISSION」のインテントアクションを実行する。  
-    * Android11 未満では Uri で指定したアプリを対象とする設定画面が起動する。  
-    * Android11 からは、「他のアプリより上に重ねて表示」できるアプリ一覧画面が起動し、ユーザーが対象のアプリを選択するように変更された。  
 
 謝辞
 ----------
