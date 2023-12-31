@@ -11,11 +11,19 @@ android {
 
     defaultConfig {
         applicationId = "dev.seabat.android.usbdebugswitch"
-        minSdk = 21
+        minSdk = 26
         targetSdk = 33
-        versionCode = 5
-        versionName = "0.13.0"
+        versionCode = 6
+        versionName = "0.14.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.0"
     }
 
     buildTypes {
@@ -41,6 +49,14 @@ dependencies {
 
     //coroutine
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+    implementation("androidx.compose.material3:material3:1.1.2")
+
+    //compose
+    val composeBom = platform("androidx.compose:compose-bom:2023.01.00")
+    implementation(composeBom)
+    implementation("androidx.activity:activity-compose:1.6.1")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    debugImplementation("androidx.compose.ui:ui-tooling")
 
     testImplementation("junit:junit:4.12")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
