@@ -86,8 +86,8 @@ fun MainScreen(
             Image(
                 modifier = Modifier
                     .padding(vertical = 20.dp)
-                    .size(100.dp),
-                painter = painterResource(id = R.mipmap.ic_launcher_foreground_toumei),
+                    .size(180.dp),
+                painter = painterResource(id = R.mipmap.ic_launcher_foreground),
                 contentDescription = stringResource(id = R.string.app_name)
             )
 

@@ -16,6 +16,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import dev.seabat.android.usbdebugswitch.compose.MainScreen
 import dev.seabat.android.usbdebugswitch.constants.InternetStateType
 import dev.seabat.android.usbdebugswitch.constants.OverlayStateType
@@ -33,6 +34,7 @@ import dev.seabat.android.usbdebugswitch.utils.UsbDebugStatusChecker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(){
 
@@ -120,7 +122,7 @@ class MainActivity : AppCompatActivity(){
                     InternetStateRepository().setEnabled(it == InternetStateType.ON, this)
                 },
                 onToggleSetting = {
-                    sendCommandToOverlayService(it)
+                    sendOverlayTypeToOverlayService(it)
                 }
             )
         }
@@ -163,7 +165,7 @@ class MainActivity : AppCompatActivity(){
 
     override fun onDestroy() {
         if(DEBUG) Log.d(TAG, "[${taskId}] onDestroy")
-        finalizeReceiver()
+        unRegisterReceivers()
         super.onDestroy()
     }
 
@@ -210,6 +212,9 @@ class MainActivity : AppCompatActivity(){
         )
     }
 
+    /**
+     * 設定アプリの Usb Debug Switch 設定画面を起動する
+     */
     private fun launchAppSetting() {
         val intent = Intent().apply {
             action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
@@ -218,6 +223,9 @@ class MainActivity : AppCompatActivity(){
         startActivity(intent)
     }
 
+    /**
+     * 初期化を進行させる
+     */
     private fun proceedSetup(next: SetupStatusType) {
         this.setupStatus = next
         Log.i("UsbDebugSwitch", "Setup status: $next")
@@ -226,28 +234,44 @@ class MainActivity : AppCompatActivity(){
                 // Do nothing
             }
             SetupStatusType.INTERNET_VIEW -> {
-                setupInternetView()
+                lifecycleScope.launch {
+                    setupInternetView()
+                }
             }
             SetupStatusType.OVERLAY_VIEW -> {
-                setupOverlayView()
+                lifecycleScope.launch {
+                    setupOverlayView()
+                }
             }
             SetupStatusType.USB_DEBUG_VIEW -> {
-                setupUsbDebugView()
+                lifecycleScope.launch {
+                    setupUsbDebugView()
+                }
             }
             SetupStatusType.NOTIFICATION_PERMISSION -> {
-                requestNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                lifecycleScope.launch {
+                    requestNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                }
             }
             SetupStatusType.OVERLAY_RECEIVER -> {
-                setupOverlayReceiver()
+                lifecycleScope.launch {
+                    registerOverlayReceiver()
+                }
             }
             SetupStatusType.OVERLAY_PERMISSION -> {
-                setupOverlayPermission()
+                lifecycleScope.launch {
+                    setupOverlayPermission()
+                }
             }
             SetupStatusType.OVERLAY_SERVICE -> {
-                startOverlayService()
+                lifecycleScope.launch {
+                    startOverlayService()
+                }
             }
             SetupStatusType.WIFI_STATE_RECEIVER -> {
-                setupWifiStateReceiver()
+                lifecycleScope.launch {
+                    registerWifiStateReceiver()
+                }
             }
             SetupStatusType.FINISH -> {
                 // Do nothing
@@ -278,6 +302,9 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
+    /**
+     * OverlayService を開始する
+     */
     private fun startOverlayService() {
         startService(
             Intent(this, OverlayService::class.java).apply {
@@ -288,7 +315,7 @@ class MainActivity : AppCompatActivity(){
     }
 
     /**
-     * オーバーレイサービスを開始を試みる
+     * OverlayService の開始を試みる
      */
     private fun tryToStartOverlayService(){
         // 通知パーミッションをチェック
@@ -318,7 +345,10 @@ class MainActivity : AppCompatActivity(){
         )
     }
 
-    private fun sendCommandToOverlayService(setting: SelectedOverlayType) {
+    /**
+     * OverlayService にオーバーレイのタイプを送信する
+     */
+    private fun sendOverlayTypeToOverlayService(setting: SelectedOverlayType) {
         sendBroadcast(
             Intent().apply {
                 action = OverlayService.ACTION_SELECT_OVERLAY_SETTING
@@ -328,19 +358,24 @@ class MainActivity : AppCompatActivity(){
     }
 
     /**
-     * オーバーレイサービスを開始する
+     * OverlayService を停止する
      */
     private fun stopOverlayService() {
-        val intent = Intent(this, OverlayService::class.java)
-        stopService(intent)
+        stopService(Intent(this, OverlayService::class.java))
     }
 
+    /**
+     * オーバーレイ設定表示を初期化
+     */
     private fun setupOverlayView() {
         _overlayStateFlow.update{ OverlayStateRepository().load() }
         _selectSettingStateFlow.update { SelectedOverlayRepository().load() }
         proceedSetup(SetupStatusType.USB_DEBUG_VIEW)
     }
 
+    /**
+     * USB デバッグ表示を初期化
+     */
     private fun setupUsbDebugView() {
         _usbDebugStateFlow.update {
             if (UsbDebugStatusChecker.isUsbDebugEnabled(this)) {
@@ -353,6 +388,9 @@ class MainActivity : AppCompatActivity(){
         proceedSetup(SetupStatusType.NOTIFICATION_PERMISSION)
     }
 
+    /**
+     * インターネット接続表示を初期化
+     */
     private fun setupInternetView() {
         _internetStateFlow.update {
             if (InternetStateRepository().isEnabled()) {
@@ -365,7 +403,7 @@ class MainActivity : AppCompatActivity(){
     }
 
     @RequiresApi(Build.VERSION_CODES.O) // for RECEIVER_NOT_EXPORTED
-    private fun setupOverlayReceiver() {
+    private fun registerOverlayReceiver() {
         mOverlayStatusReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 when (intent?.action) {
@@ -406,7 +444,7 @@ class MainActivity : AppCompatActivity(){
     }
 
     @RequiresApi(Build.VERSION_CODES.O) // for RECEIVER_NOT_EXPORTED
-    private fun setupWifiStateReceiver() {
+    private fun registerWifiStateReceiver() {
         mWifiStateReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (intent?.action == WifiManager.WIFI_STATE_CHANGED_ACTION) {
@@ -437,7 +475,7 @@ class MainActivity : AppCompatActivity(){
         proceedSetup(SetupStatusType.FINISH)
     }
 
-    private fun finalizeReceiver()  {
+    private fun unRegisterReceivers()  {
         unregisterReceiver(mOverlayStatusReceiver)
         unregisterReceiver(mWifiStateReceiver)
     }
