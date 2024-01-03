@@ -50,6 +50,7 @@ dependencies {
     //coroutine
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     implementation("androidx.compose.material3:material3:1.1.2")
+    implementation("androidx.navigation:navigation-fragment:2.6.0")
 
     //compose
     val composeBom = platform("androidx.compose:compose-bom:2023.01.00")
