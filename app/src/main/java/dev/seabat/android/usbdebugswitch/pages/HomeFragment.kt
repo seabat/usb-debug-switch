@@ -50,6 +50,7 @@ class HomeFragment : Fragment(){
         const val TAG_GOTO_APP_SETTING = "TAG_GOTO_APP_SETTING"
         const val ACTION_SWITCH_OVERLAY_STATUS = "ACTION_SWITCH_OVERLAY_STATUS"
         const val ACTION_SWITCH_INTERNET = "ACTION_SWITCH_INTERNET"
+        const val ACTION_LAUNCH_DEVELOPER_OPTIONS = "ACTION_LAUNCH_DEVELOPER_OPTIONS"
         const val KEY_OVERLAY_STATUS = "KEY_OVERLAY_STATUS"
         const val KEY_SELECTED_OVERLAY = "KEY_SELECTED_OVERLAY"
         const val KEY_INTERNET_STATUS = "KEY_INTERNET_STATUS"
@@ -88,8 +89,8 @@ class HomeFragment : Fragment(){
     }
     private val developerOptionsLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        setupUsbDebugView()
+    ) { _ ->
+        updateUsbDebugView()
         // オーバーレイサービスに「開発者向けオプション」画面から戻ったことを通知し、オーバーレイアイコンを変更してもらう
         requireContext().sendBroadcast(
             Intent().apply {
@@ -241,7 +242,7 @@ class HomeFragment : Fragment(){
             }
             SetupStatusType.OVERLAY_RECEIVER -> {
                 lifecycleScope.launch {
-                    registerOverlayReceiver()
+                    registerReceiverForOverlayService()
                 }
             }
             SetupStatusType.OVERLAY_PERMISSION -> {
@@ -360,9 +361,9 @@ class HomeFragment : Fragment(){
     }
 
     /**
-     * USB デバッグ表示を初期化
+     * USB デバッグ状態を表示
      */
-    private fun setupUsbDebugView() {
+    private fun updateUsbDebugView() {
         _usbDebugStateFlow.update {
             if (UsbDebugStatusChecker.isUsbDebugEnabled(requireContext())) {
                 UsbDebugStateType.ON
@@ -370,7 +371,13 @@ class HomeFragment : Fragment(){
                 UsbDebugStateType.OFF
             }
         }
+    }
 
+    /**
+     * USB デバッグ表示を初期化
+     */
+    private fun setupUsbDebugView() {
+        updateUsbDebugView()
         proceedSetup(SetupStatusType.NOTIFICATION_PERMISSION)
     }
 
@@ -389,7 +396,7 @@ class HomeFragment : Fragment(){
     }
 
     @RequiresApi(Build.VERSION_CODES.O) // for RECEIVER_NOT_EXPORTED
-    private fun registerOverlayReceiver() {
+    private fun registerReceiverForOverlayService() {
         mOverlayStatusReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 when (intent?.action) {
@@ -413,6 +420,11 @@ class HomeFragment : Fragment(){
                            requireActivity()
                         )
                     }
+                    ACTION_LAUNCH_DEVELOPER_OPTIONS ->{
+                        DeveloperOptionsLauncher.startActivityForResult { intent ->
+                            developerOptionsLauncher.launch(intent)
+                        }
+                    }
                 }
             }
         }
@@ -422,6 +434,7 @@ class HomeFragment : Fragment(){
             IntentFilter().apply {
                 addAction(ACTION_SWITCH_OVERLAY_STATUS)
                 addAction(ACTION_SWITCH_INTERNET)
+                addAction(ACTION_LAUNCH_DEVELOPER_OPTIONS)
             },
             Context.RECEIVER_NOT_EXPORTED
         )
