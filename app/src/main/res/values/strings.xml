@@ -18,6 +18,8 @@
     <string name="setting_overlay_off">OFF</string>
 
     <string name="title_setting_internet">インターネット接続</string>
+    <string name="setting_mobile_data_connection">モバイルデータ通信</string>
+    <string name="setting_wifi_connection">Wi-Fi通信</string>
     <string name="setting_internet_on">ON</string>
     <string name="setting_internet_off">OFF</string>
 
