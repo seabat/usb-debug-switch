@@ -1,4 +1,4 @@
-package dev.seabat.android.usbdebugswitch.compose
+package dev.seabat.android.usbdebugswitch.compose.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
