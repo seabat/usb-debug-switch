@@ -19,7 +19,7 @@ class TutorialStateRepository(
             .getDefaultSharedPreferences(context)
             .getString(
                 "pref_tutorial",
-                TutorialStateType.DISPLAYED.key
+                TutorialStateType.NOT_DISPLAYED.key
             ) ?: TutorialStateType.NOT_DISPLAYED.key
         return TutorialStateType.fromKey(preferenceData)
     }
