@@ -3,6 +3,7 @@ package dev.seabat.android.usbdebugswitch.compose
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -73,46 +74,55 @@ fun MainScreen(
             )
         }
     ) { contentPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(contentPadding)
-                .background(color = Color(0xFFF2F0F4)),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(contentPadding)
+            .background(color = Color(0xFFF2F0F4))
+            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
         ) {
+            Column(
+                modifier = Modifier.align(Alignment.TopCenter),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
+                Image(
+                    modifier = Modifier
+                        .padding(vertical = 20.dp)
+                        .size(180.dp),
+                    painter = painterResource(id = R.mipmap.ic_launcher_foreground),
+                    contentDescription = stringResource(id = R.string.app_name)
+                )
+
+                OverlaySettingCard(
+                    overlayState =  overlayState,
+                    selectedSettingState = selectedSettingState,
+                    onSwitch = onOverlaySwitch,
+                    onToggleSetting = onToggleSetting
+                )
+
+                SettingCard(
+                    title =  stringResource(id = R.string.title_setting_usb_debug),
+                    onOff =  usbDebugState.key,
+                    onSwitch = { onUsbDebugSwitch() }
+                )
+
+                InternetSettingCard(
+                    onOff =  internetState.key,
+                    onSwitch = {
+                        onInternetSwitch(
+                            if (it == "on") {
+                                InternetStateType.OFF
+                            } else {
+                                InternetStateType.ON
+                            }
+                        )
+                    }
+                )
+            }
             Image(
-                modifier = Modifier
-                    .padding(vertical = 20.dp)
-                    .size(180.dp),
-                painter = painterResource(id = R.mipmap.ic_launcher_foreground),
-                contentDescription = stringResource(id = R.string.app_name)
-            )
-
-            OverlaySettingCard(
-                overlayState =  overlayState,
-                selectedSettingState = selectedSettingState,
-                onSwitch = onOverlaySwitch,
-                onToggleSetting = onToggleSetting
-            )
-
-            SettingCard(
-                title =  stringResource(id = R.string.title_setting_usb_debug),
-                onOff =  usbDebugState.key,
-                onSwitch = { onUsbDebugSwitch() }
-            )
-
-            InternetSettingCard(
-                onOff =  internetState.key,
-                onSwitch = {
-                    onInternetSwitch(
-                        if (it == "on") {
-                            InternetStateType.OFF
-                        } else {
-                            InternetStateType.ON
-                        }
-                    )
-                }
+                modifier = Modifier.align(Alignment.BottomEnd),
+                painter = painterResource(id = R.drawable.outline_build_40),
+                contentDescription = null
             )
         }
     }
@@ -122,7 +132,7 @@ fun MainScreen(
 fun SettingCard(title: String, onOff: String, onSwitch: (String) -> Unit) {
     OutlinedCard(
         modifier = Modifier
-            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+            .padding(bottom = 16.dp)
             .fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFFFBEFF6)

@@ -13,7 +13,7 @@
     <string name="setting_usb_debug_on">ON</string>
     <string name="setting_usb_debug_off">OFF</string>
 
-    <string name="title_setting_overlay">画面オーバーレイ</string>
+    <string name="title_setting_overlay">スイッチを常に表示</string>
     <string name="setting_overlay_on">ON</string>
     <string name="setting_overlay_off">OFF</string>
 
