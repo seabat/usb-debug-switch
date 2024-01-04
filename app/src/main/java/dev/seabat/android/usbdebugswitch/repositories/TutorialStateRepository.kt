@@ -3,34 +3,34 @@ package dev.seabat.android.usbdebugswitch.repositories
 import android.content.Context
 import androidx.preference.PreferenceManager
 import dev.seabat.android.usbdebugswitch.MainApplication
-import dev.seabat.android.usbdebugswitch.constants.SelectedOverlayType
+import dev.seabat.android.usbdebugswitch.constants.TutorialStateType
 
-class SelectedOverlayRepository(
+class TutorialStateRepository(
     private val context: Context = MainApplication.instance
 ) {
 
     /**
-     * 選択したオーバーレイ種別を読み込む
+     * チュートリアルの表示済み状態を読み込む
      *
      * @return
      */
-    fun load(): SelectedOverlayType {
+    fun load(): TutorialStateType {
         val preferenceData = PreferenceManager
             .getDefaultSharedPreferences(context)
             .getString(
-                "pref_overlay_setting",
-                SelectedOverlayType.USB_DEBUG.key
-            ) ?: SelectedOverlayType.USB_DEBUG.key
-        return SelectedOverlayType.fromKey(preferenceData)
+                "pref_tutorial",
+                TutorialStateType.DISPLAYED.key
+            ) ?: TutorialStateType.NOT_DISPLAYED.key
+        return TutorialStateType.fromKey(preferenceData)
     }
 
     /**
-     * 選択したオーバーレイ種別を保存する
+     * チュートリアルの表示済み状態を保存する
      */
-    fun save(overlayType: SelectedOverlayType) {
+    fun save(state: TutorialStateType) {
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
         sharedPref.edit().let {editor ->
-            editor.putString("pref_overlay_setting", overlayType.key)
+            editor.putString("pref_tutorial", state.key)
             editor.commit() // commit を忘れずに！
         }
     }
