@@ -22,7 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import dev.seabat.android.usbdebugswitch.BuildConfig
 import dev.seabat.android.usbdebugswitch.R
-import dev.seabat.android.usbdebugswitch.compose.home.MainScreen
+import dev.seabat.android.usbdebugswitch.compose.home.HomeScreen
 import dev.seabat.android.usbdebugswitch.constants.InternetStateType
 import dev.seabat.android.usbdebugswitch.constants.OverlayStateType
 import dev.seabat.android.usbdebugswitch.constants.SelectedOverlayType
@@ -120,7 +120,7 @@ class HomeFragment : Fragment(){
     ): View {
         val view = ComposeView(requireContext()).apply {
             setContent {
-                MainScreen(
+                HomeScreen(
                     internetStateFlow = internetStateFlow,
                     overlayStateFlow = overlayStateFlow,
                     usbDebugStateFlow = usbDebugStateFlow,

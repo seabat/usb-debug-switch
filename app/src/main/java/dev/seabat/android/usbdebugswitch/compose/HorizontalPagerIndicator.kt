@@ -25,7 +25,7 @@ fun HorizontalPagerIndicator(
     targetPage: Int,
     currentPageOffsetFraction: Float,
     modifier: Modifier = Modifier,
-    indicatorColor: Color = Color.DarkGray,
+    indicatorColor: Color = Color(0xFF75565c),
     unselectedIndicatorSize: Dp = 10.dp,
     selectedIndicatorSize: Dp = 14.dp,
     indicatorCornerRadius: Dp = 2.dp,

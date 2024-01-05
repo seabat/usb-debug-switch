@@ -41,7 +41,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(
+fun HomeScreen(
     internetStateFlow: StateFlow<InternetStateType>,
     overlayStateFlow: StateFlow<OverlayStateType>,
     usbDebugStateFlow: StateFlow<UsbDebugStateType>,
@@ -167,7 +167,7 @@ fun SettingCard(title: String, onOff: String, onSwitch: (String) -> Unit) {
 @Preview
 @Composable
 fun MainScreenPreview() {
-    MainScreen(
+    HomeScreen(
         MutableStateFlow(InternetStateType.OFF),
         MutableStateFlow(OverlayStateType.OFF),
         MutableStateFlow(UsbDebugStateType.OFF),

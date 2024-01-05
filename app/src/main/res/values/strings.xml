@@ -2,7 +2,8 @@
     <string name="app_name">USB Debug Switch</string>
     <string name="dialog_msg_goto_overlay_setting">本アプリを使用するには他のアプリの上に本アプリがオーバーレイすることを許可してください。</string>
 
-    <string name="tutorial_title">チュートリアル</string>
+    <string name="tutorial_title">USB Debug Switch の使い方</string>
+    <string name="tutorial_close">閉じる</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_enable_receive_boot_complete">自動起動</string>

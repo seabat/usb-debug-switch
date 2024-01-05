@@ -11,7 +11,9 @@
         android:label="@string/tutorial_title">
         <action
             android:id="@+id/action_to_home"
-            app:destination="@id/dest_home">
+            app:destination="@id/dest_home"
+            app:popUpTo="@id/dest_tutorial"
+            app:popUpToInclusive="true">
         </action>
     </fragment>
 

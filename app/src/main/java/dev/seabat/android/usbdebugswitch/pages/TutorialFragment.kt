@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import dev.seabat.android.usbdebugswitch.compose.tutorial.TutorialScreen
 import dev.seabat.android.usbdebugswitch.constants.TutorialStateType
 import dev.seabat.android.usbdebugswitch.repositories.TutorialStateRepository
@@ -31,8 +32,11 @@ class TutorialFragment : Fragment() {
         val view = ComposeView(requireContext()).apply {
             setContent {
                 TutorialScreen(
-                    tutorialLoadedFlow,
-                    bitmapsFlow
+                    tutorialLoadedFlow = tutorialLoadedFlow,
+                    bitmapsFlow = bitmapsFlow,
+                    onClose = {
+                        findNavController().navigate(TutorialFragmentDirections.actionToHome())
+                    }
                 )
             }
         }
@@ -42,7 +46,7 @@ class TutorialFragment : Fragment() {
 
     private fun loadTutorialState() {
         if (TutorialStateRepository().load() == TutorialStateType.DISPLAYED) {
-            TutorialFragmentDirections.actionToHome()
+            findNavController().navigate(TutorialFragmentDirections.actionToHome())
         } else {
             _bitmapsFlow.update {
                 arrayListOf(
@@ -54,6 +58,7 @@ class TutorialFragment : Fragment() {
                     )
                 )
             }
+            TutorialStateRepository().save(TutorialStateType.DISPLAYED)
         }
         _tutorialLoadedFlow.update { true }
     }
