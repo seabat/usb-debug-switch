@@ -51,6 +51,9 @@ class TutorialFragment : Fragment() {
             _bitmapsFlow.update {
                 arrayListOf(
                     BitmapFactory.decodeStream(
+                        requireContext().assets.open("screenshot_developer_option.png")
+                    ),
+                    BitmapFactory.decodeStream(
                         requireContext().assets.open("screenshot_app_on.png")
                     ),
                     BitmapFactory.decodeStream(

@@ -63,6 +63,11 @@ fun TutorialContent(
     bitmaps: List<Bitmap>,
     onClose: () -> Unit
 ) {
+    val descriptions = arrayListOf(
+        stringResource(id = R.string.tutorial_description_1),
+        stringResource(id = R.string.tutorial_description_2),
+        stringResource(id = R.string.tutorial_description_3),
+    )
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -107,14 +112,13 @@ fun TutorialContent(
                         Image(
                             bitmap = bitmap,
                             "assetsImage",
-                            modifier = Modifier.fillMaxHeight(0.65f)
+                            modifier = Modifier.fillMaxHeight(0.6f)
                         )
                         Text(
-                            text = "xxxxxxxxXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+                            text = descriptions[it],
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier
                                 .padding(top = 16.dp)
-                                .fillMaxWidth(0.8f)
                         )
                     }
                 }
