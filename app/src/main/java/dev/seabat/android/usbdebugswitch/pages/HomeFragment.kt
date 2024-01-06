@@ -20,17 +20,20 @@ import androidx.annotation.RequiresApi
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import dev.seabat.android.usbdebugswitch.BuildConfig
 import dev.seabat.android.usbdebugswitch.R
-import dev.seabat.android.usbdebugswitch.compose.MainScreen
+import dev.seabat.android.usbdebugswitch.compose.home.HomeScreen
 import dev.seabat.android.usbdebugswitch.constants.InternetStateType
 import dev.seabat.android.usbdebugswitch.constants.OverlayStateType
 import dev.seabat.android.usbdebugswitch.constants.SelectedOverlayType
+import dev.seabat.android.usbdebugswitch.constants.TutorialStateType
 import dev.seabat.android.usbdebugswitch.constants.UsbDebugStateType
 import dev.seabat.android.usbdebugswitch.dialog.PermissionWarningDialog
 import dev.seabat.android.usbdebugswitch.repositories.InternetStateRepository
 import dev.seabat.android.usbdebugswitch.repositories.OverlayStateRepository
 import dev.seabat.android.usbdebugswitch.repositories.SelectedOverlayRepository
+import dev.seabat.android.usbdebugswitch.repositories.TutorialStateRepository
 import dev.seabat.android.usbdebugswitch.services.OverlayService
 import dev.seabat.android.usbdebugswitch.utils.CheckNotificationPermission
 import dev.seabat.android.usbdebugswitch.utils.CheckOverlayPermission
@@ -120,7 +123,7 @@ class HomeFragment : Fragment(){
     ): View {
         val view = ComposeView(requireContext()).apply {
             setContent {
-                MainScreen(
+                HomeScreen(
                     internetStateFlow = internetStateFlow,
                     overlayStateFlow = overlayStateFlow,
                     usbDebugStateFlow = usbDebugStateFlow,
@@ -143,6 +146,15 @@ class HomeFragment : Fragment(){
                     },
                     onToggleSetting = {
                         sendOverlayTypeToOverlayService(it)
+                    },
+                    goTutorial = {
+                        lifecycleScope.launch {
+                            TutorialStateRepository().save(TutorialStateType.NOT_DISPLAYED)
+                            findNavController().navigate(HomeFragmentDirections.actionToTutorial())
+                        }
+                    },
+                    goAppSetting = {
+                        lifecycleScope.launch {}
                     }
                 )
             }

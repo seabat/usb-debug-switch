@@ -1,7 +1,9 @@
-package dev.seabat.android.usbdebugswitch.compose
+package dev.seabat.android.usbdebugswitch.compose.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,7 +44,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(
+fun HomeScreen(
     internetStateFlow: StateFlow<InternetStateType>,
     overlayStateFlow: StateFlow<OverlayStateType>,
     usbDebugStateFlow: StateFlow<UsbDebugStateType>,
@@ -49,7 +52,9 @@ fun MainScreen(
     onInternetSwitch: (InternetStateType) -> Unit,
     onOverlaySwitch: () -> Unit,
     onUsbDebugSwitch: () -> Unit,
-    onToggleSetting: (SelectedOverlayType) -> Unit
+    onToggleSetting: (SelectedOverlayType) -> Unit,
+    goTutorial: () -> Unit,
+    goAppSetting: () -> Unit
 ) {
     val internetState by internetStateFlow.collectAsState()
     val overlayState by overlayStateFlow.collectAsState()
@@ -85,14 +90,38 @@ fun MainScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
+                // アプリアイコン
                 Image(
                     modifier = Modifier
-                        .padding(vertical = 20.dp)
+                        .padding(vertical = 8.dp)
                         .size(180.dp),
                     painter = painterResource(id = R.mipmap.ic_launcher_foreground),
                     contentDescription = stringResource(id = R.string.app_name)
                 )
 
+                // 使い方
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .border(
+                                width = 2.dp,
+                                color = Color(0xFF75565c),
+                                shape = RoundedCornerShape(20.dp)
+                            )
+                            .clickable { goTutorial() }
+                            .padding(top = 5.dp, start = 20.dp, end = 20.dp, bottom = 5.dp),
+                        text = stringResource(id = R.string.tutorial),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFF75565c)
+                    )
+                }
+
+                // スイッチを常に表示
                 OverlaySettingCard(
                     overlayState =  overlayState,
                     selectedSettingState = selectedSettingState,
@@ -100,12 +129,14 @@ fun MainScreen(
                     onToggleSetting = onToggleSetting
                 )
 
+                // USB デバッグ
                 SettingCard(
                     title =  stringResource(id = R.string.title_setting_usb_debug),
                     onOff =  usbDebugState.key,
                     onSwitch = { onUsbDebugSwitch() }
                 )
 
+                // インターネット接続
                 InternetSettingCard(
                     onOff =  internetState.key,
                     onSwitch = {
@@ -120,7 +151,7 @@ fun MainScreen(
                 )
             }
             Image(
-                modifier = Modifier.align(Alignment.BottomEnd),
+                modifier = Modifier.align(Alignment.BottomEnd).clickable { goAppSetting() },
                 painter = painterResource(id = R.drawable.outline_build_40),
                 contentDescription = null
             )
@@ -167,7 +198,7 @@ fun SettingCard(title: String, onOff: String, onSwitch: (String) -> Unit) {
 @Preview
 @Composable
 fun MainScreenPreview() {
-    MainScreen(
+    HomeScreen(
         MutableStateFlow(InternetStateType.OFF),
         MutableStateFlow(OverlayStateType.OFF),
         MutableStateFlow(UsbDebugStateType.OFF),
@@ -175,6 +206,8 @@ fun MainScreenPreview() {
         onInternetSwitch = {},
         onOverlaySwitch = {},
         onUsbDebugSwitch = {},
-        onToggleSetting = {}
+        onToggleSetting = {},
+        goTutorial = {},
+        goAppSetting = {}
     )
 }
