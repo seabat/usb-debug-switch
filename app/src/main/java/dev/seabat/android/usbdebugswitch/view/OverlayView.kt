@@ -3,11 +3,15 @@ package dev.seabat.android.usbdebugswitch.view
 import android.content.Context
 import android.graphics.PixelFormat
 import android.graphics.Point
+import android.hardware.display.DisplayManager
 import android.os.Build
 import android.os.Handler
 import android.util.Log
 import android.view.*
+import android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
 import android.widget.ImageView
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.getSystemService
 import dev.seabat.android.usbdebugswitch.R
 import dev.seabat.android.usbdebugswitch.constants.SelectedOverlayType
 import dev.seabat.android.usbdebugswitch.repositories.InternetStateRepository
@@ -36,14 +40,37 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchL
     init {
         this.windowManager = mContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
 
-        val display = this.windowManager.defaultDisplay
-        val size = Point()
-        display.getSize(size)
-        displaySize = size
-        Log.d("XXX", "displaySize.x:" + displaySize.x + " displaySize.y:" + displaySize.y)
+        // NOTE: API 30 からは Service から受け取った Context を使用して display 操作をしてはいけないらしく、
+        //       以下のエラーが発生する。
+        //       ```
+        //       java.lang.UnsupportedOperationException: Tried to obtain display from a Context
+        //       not associated with one. Only visual Contexts (such as Activity or one created
+        //       with Context#createWindowContext) or ones created with Context#createDisplayContext
+        //       are associated with displays. Other types of Contexts are typically related to
+        //       background entities and may return an arbitrary display.
+        //       ```
+        //       Context#createDisplayContext の使い方は https://pisuke-code.com/android-getter-for-defaultdisplay-display-is-deprecated/
+        //       を参考にする。
+
+        val layoutInflater = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            val display = this.windowManager.defaultDisplay
+            val size = Point()
+            display.getSize(size)
+            displaySize = size
+            Log.d("XXX", "displaySize.x:" + displaySize.x + " displaySize.y:" + displaySize.y)
+            LayoutInflater.from(mContext)
+        } else {
+            val displayManager = mContext.getSystemService<DisplayManager>()
+                ?.getDisplay(Display.DEFAULT_DISPLAY)
+            val displayContext = mContext.createDisplayContext(displayManager!!)
+            val screenWidth = displayContext.resources.displayMetrics.widthPixels
+            val screenHeight = displayContext.resources.displayMetrics.heightPixels
+            displaySize = Point(screenWidth, screenHeight)
+            Log.d("XXX", "displaySize.x:" + displaySize.x + " displaySize.y:" + displaySize.y)
+            LayoutInflater.from(displayContext)
+        }
 
         // レイアウトファイルから重ね合わせするViewを作成する
-        val layoutInflater = LayoutInflater.from(mContext)
         mOverlayView = layoutInflater.inflate(R.layout.overlay, null) as ViewGroup
         registerImage()
         setupOverlayListener()
