@@ -67,7 +67,16 @@ fun TutorialContent(
         stringResource(id = R.string.tutorial_description_1),
         stringResource(id = R.string.tutorial_description_2),
         stringResource(id = R.string.tutorial_description_3),
+        stringResource(id = R.string.tutorial_description_4),
+        stringResource(id = R.string.tutorial_description_5),
+        stringResource(id = R.string.tutorial_description_6),
+        stringResource(id = R.string.tutorial_description_7),
+        stringResource(id = R.string.tutorial_description_8),
+        stringResource(id = R.string.tutorial_description_9),
+        stringResource(id = R.string.tutorial_description_10),
+        stringResource(id = R.string.tutorial_description_11),
     )
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -99,6 +108,7 @@ fun TutorialContent(
                 val pagerState = rememberPagerState()
                 HorizontalPager(
                     pageCount = bitmaps.size,
+                    beyondBoundsPageCount = bitmaps.size,
                     state = pagerState,
                     contentPadding = PaddingValues(
 //                horizontal = 32.dp,

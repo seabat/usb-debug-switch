@@ -5,9 +5,16 @@
     <string name="tutorial_title">USB Debug Switch の使い方</string>
     <string name="tutorial_close">閉じる</string>
     <string name="tutorial_description_1">USB デバッグの ON/OFF を切り替えるには予め開発者向けオプションを有効にする必要があります。[設定] > [デバイス情報] に移動し、[ビルド番号] オプションを 7 回タップすると、「You are now a developer!」というメッセージが表示され、開発者向けオプションが有効になります。</string>
-    <string name="tutorial_description_2">2</string>
-    <string name="tutorial_description_3">3</string>
-    <string name="tutorial_description_4">4</string>
+    <string name="tutorial_description_2">通知の送信を許可してください。本アプリがバックグラウンドで動作していることを通知するために必要な設定であり、本アプリが PUSH 通知を受信することはありません。</string>
+    <string name="tutorial_description_3">本アプリをバックグラウンドに移動させた後に USB デバッグの ON/OFF を切り替えたい場合は、「スイッチを常に表示」を ON に切り替えてください。</string>
+    <string name="tutorial_description_4">他のアプリの上に重ねて表示するアプリとして「USB Debug Switch」を選択してください。</string>
+    <string name="tutorial_description_5">「他のアプリの上に重ねて表示できるようにする」を ON にし、左上の ← ボタンで本アプリに戻ってください。</string>
+    <string name="tutorial_description_6">設定アプリから本アプリに戻ると蜘蛛のアイコンが表示されています。このアイコンは本アプリがバックグラウンドに移動しても他のアプリの上に常に表示されます。</string>
+    <string name="tutorial_description_7">蜘蛛のアイコンをタップすると設定アプリの開発者向けオプション画面が表示されます。</string>
+    <string name="tutorial_description_8">USBデバッグを ON にするとダイアログが表示されるので OK を選択してください。</string>
+    <string name="tutorial_description_9">USBデバッグ設定が ON に切り替わったことを確認してから左上の ← ボタンで本アプリに戻ってください。</string>
+    <string name="tutorial_description_10">蜘蛛のアイコンが ON になります。</string>
+    <string name="tutorial_description_11">本アプリをバックグラウンドに移動しても蜘蛛のアイコンは常に表示されます。このアイコンはドラッグ＆ドロップで好きな場所に移動させることができます。</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_enable_receive_boot_complete">自動起動</string>

@@ -50,15 +50,50 @@ class TutorialFragment : Fragment() {
         } else {
             _bitmapsFlow.update {
                 arrayListOf(
+                    // 1
                     BitmapFactory.decodeStream(
                         requireContext().assets.open("screenshot_developer_option.png")
                     ),
+                    // 2
+                    BitmapFactory.decodeStream(
+                        requireContext().assets.open("screenshot_notification_permission.png")
+                    ),
+                    // 3
+                    BitmapFactory.decodeStream(
+                        requireContext().assets.open("screenshot_enable_overlay.png")
+                    ),
+                    // 4
+                    BitmapFactory.decodeStream(
+                        requireContext().assets.open("screenshot_select_usb_debug_switch.png")
+                    ),
+                    // 5
+                    BitmapFactory.decodeStream(
+                        requireContext().assets.open("screenshot_usb_debug_switch_overlay_setting.png")
+                    ),
+                    // 6
+                    BitmapFactory.decodeStream(
+                        requireContext().assets.open("screenshot_app_off.png")
+                    ),
+                    // 7
+                    BitmapFactory.decodeStream(
+                        requireContext().assets.open("screenshot_usb_debug_setting_off.png")
+                    ),
+                    // 8
+                    BitmapFactory.decodeStream(
+                        requireContext().assets.open("screenshot_usb_debug_setting_dialog.png")
+                    ),
+                    // 9
+                    BitmapFactory.decodeStream(
+                        requireContext().assets.open("screenshot_usb_debug_setting_on.png")
+                    ),
+                    // 10
                     BitmapFactory.decodeStream(
                         requireContext().assets.open("screenshot_app_on.png")
                     ),
+                    // 11
                     BitmapFactory.decodeStream(
-                        requireContext().assets.open("screenshot_app_off.png")
-                    )
+                        requireContext().assets.open("screenshot_home_on_top.png")
+                    ),
                 )
             }
             TutorialStateRepository().save(TutorialStateType.DISPLAYED)

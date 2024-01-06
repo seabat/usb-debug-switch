@@ -26,8 +26,8 @@ fun HorizontalPagerIndicator(
     currentPageOffsetFraction: Float,
     modifier: Modifier = Modifier,
     indicatorColor: Color = Color(0xFF75565c),
-    unselectedIndicatorSize: Dp = 10.dp,
-    selectedIndicatorSize: Dp = 14.dp,
+    unselectedIndicatorSize: Dp = 8.dp,
+    selectedIndicatorSize: Dp = 10.dp,
     indicatorCornerRadius: Dp = 2.dp,
     indicatorPadding: Dp = 2.dp
 ) {
