@@ -26,5 +26,16 @@
             android:id="@+id/action_to_tutorial"
             app:destination="@id/dest_tutorial">
         </action>
+        <action
+            android:id="@+id/action_to_setting"
+            app:destination="@id/dest_setting">
+        </action>
+    </fragment>
+
+    <!-- 設定画面 -->
+    <fragment
+        android:id="@+id/dest_setting"
+        android:name="dev.seabat.android.usbdebugswitch.pages.SettingFragment"
+        android:label="@string/setting_title">
     </fragment>
 </navigation>
