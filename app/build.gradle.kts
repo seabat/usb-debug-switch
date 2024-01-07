@@ -4,6 +4,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("androidx.navigation.safeargs")
+    id("com.google.android.gms.oss-licenses-plugin")
 }
 
 android {
@@ -53,6 +54,9 @@ dependencies {
 
     //navigation
     implementation("androidx.navigation:navigation-fragment:2.6.0")
+
+    // oss license
+    implementation("com.google.android.gms:play-services-oss-licenses:17.0.1")
 
     //compose
     val composeBom = platform("androidx.compose:compose-bom:2023.01.00")

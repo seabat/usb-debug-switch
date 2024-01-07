@@ -13,18 +13,22 @@ import dev.seabat.android.usbdebugswitch.BuildConfig
 import dev.seabat.android.usbdebugswitch.R
 
 @Composable
-fun SettingsContent(modifier: Modifier = Modifier) {
+fun SettingsContent(modifier: Modifier = Modifier, launchBrowser: () -> Unit, goLicense: () -> Unit) {
     Column(modifier = modifier) {
         SettingsItem(
             painterResource(id = R.drawable.baseline_info_outline_30),
             stringResource(id = R.string.settings_version),
-            clickable = false,
             optionalText = "${BuildConfig.VERSION_NAME}"
         )
         SettingsItem(
             painterResource(id = R.drawable.baseline_lock_outline_30),
             stringResource(id = R.string.settings_privacy_policy),
-            clickable = true
+            onClick = { launchBrowser() }
+        )
+        SettingsItem(
+            painterResource(id = R.drawable.outline_article_30),
+            stringResource(id = R.string.settings_license),
+            onClick = { goLicense() }
         )
         Divider(modifier = Modifier.fillMaxWidth(), color = Color(0xFf7a5832))
     }
@@ -33,5 +37,5 @@ fun SettingsContent(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun SettingsContentPreview() {
-    SettingsContent()
+    SettingsContent(launchBrowser = {}, goLicense = {})
 }

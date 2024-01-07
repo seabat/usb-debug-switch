@@ -32,8 +32,8 @@ class TutorialFragment : Fragment() {
         val view = ComposeView(requireContext()).apply {
             setContent {
                 TutorialScreen(
-                    tutorialLoadedFlow = tutorialLoadedFlow,
-                    bitmapsFlow = bitmapsFlow,
+                    tutorialLoadedStateFlow = tutorialLoadedFlow,
+                    bitmapsStateFlow = bitmapsFlow,
                     onClose = {
                         findNavController().navigate(TutorialFragmentDirections.actionToHome())
                     }

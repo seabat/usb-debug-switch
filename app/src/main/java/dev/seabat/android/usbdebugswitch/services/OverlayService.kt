@@ -287,7 +287,7 @@ class OverlayService() : Service() {
 
     private fun doStopForeground(onStopService: () -> Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            stopForeground(Service.STOP_FOREGROUND_REMOVE or Service.STOP_FOREGROUND_DETACH)
+            stopForeground(STOP_FOREGROUND_REMOVE)
         } else {
             stopForeground(true)
         }

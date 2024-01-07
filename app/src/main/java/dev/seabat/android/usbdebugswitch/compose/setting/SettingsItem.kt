@@ -21,14 +21,19 @@ import androidx.compose.ui.unit.dp
 import dev.seabat.android.usbdebugswitch.R
 
 @Composable
-fun SettingsItem(painter: Painter, text: String, clickable: Boolean = false, optionalText: String? = null) {
+fun SettingsItem(
+    painter: Painter,
+    text: String,
+    optionalText: String? = null,
+    onClick: (() -> Unit)? = null
+) {
     Column {
         Divider(modifier = Modifier.fillMaxWidth(), color = Color(0xFf7a5832))
         Row(
-            modifier = if (clickable) {
+            modifier = if (onClick != null) {
                 Modifier
                     .padding()
-                    .clickable { }
+                    .clickable { onClick() }
                     .padding(vertical = 16.dp)
             } else {
                 Modifier
@@ -61,7 +66,8 @@ fun SettingsItem(painter: Painter, text: String, clickable: Boolean = false, opt
 @Composable
 fun SettingsItemPreview() {
     SettingsItem(
-        painterResource(id = R.drawable.baseline_lock_outline_30),
-        stringResource(id = R.string.settings_privacy_policy)
+        painter = painterResource(id = R.drawable.baseline_lock_outline_30),
+        text = stringResource(id = R.string.settings_privacy_policy),
+        onClick = {}
     )
 }

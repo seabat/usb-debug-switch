@@ -40,5 +40,7 @@
     <string name="settings_title">設定</string>
     <string name="settings_version">バージョン</string>
     <string name="settings_privacy_policy">プライバシーポリシー</string>
+    <string name="settings_license">OSS ライセンス</string>
 
+    <string name="license_title">OSS ライセンス</string>
 </resources>

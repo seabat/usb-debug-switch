@@ -25,7 +25,7 @@ import dev.seabat.android.usbdebugswitch.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingScreen(goBack: () -> Unit) {
+fun SettingScreen(launchBrowser: () -> Unit, goLicense: () -> Unit,goBack: () -> Unit) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -51,11 +51,14 @@ fun SettingScreen(goBack: () -> Unit) {
             )
         }
     ) { contentPadding ->
-        SettingsContent(modifier = Modifier
-            .padding(contentPadding)
-            .fillMaxSize()
-            .background(color = Color(0xFFF2F0F4))
-            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+        SettingsContent(
+            modifier = Modifier
+                .padding(contentPadding)
+                .fillMaxSize()
+                .background(color = Color(0xFFF2F0F4))
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+            launchBrowser = launchBrowser,
+            goLicense = goLicense
         )
     }
 }
@@ -63,5 +66,5 @@ fun SettingScreen(goBack: () -> Unit) {
 @Preview
 @Composable
 fun SettingScreenPreview() {
-    SettingScreen {}
+    SettingScreen(launchBrowser = {}, goLicense = {}, goBack = {})
 }

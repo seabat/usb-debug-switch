@@ -1,0 +1,97 @@
+0:46 Android Emoji2 Compat view helpers
+47:47 play-services-oss-licenses
+95:1096 Animal Sniffer
+1192:1892 Checker Framework Annotations
+3085:11357 Error Prone
+14443:11358 Guava JDK5
+25802:11362 Guava JDK7
+37165:81008 J2ObjC
+118174:1602 JSR 305
+14443:11358 JSpecify
+119777:11307 JsInterop Annotations
+131085:105133 Kotlin
+3085:11357 Kotlin coroutines
+14443:11358 SafeParcelable library
+236219:10695 apksig
+14443:11358 gsfclient
+246915:11356 kotlinx_atomicfu
+0:46 Android Support Library core UI
+258272:47 kotlinx-coroutines-bom
+47:47 play-services-basement
+258320:10694 AndroidX lifecycle common library
+258320:10694 AndroidX lifecycle livedatacore library
+258320:10694 AndroidX lifecycle runtime library
+0:46 Android Support Library Document File
+0:46 Saved State
+0:46 Compose Animation Core
+0:46 Android Support Library Interpolators
+0:46 Kotlin Stdlib Common
+0:46 Fragment Kotlin Extensions
+0:46 Android Support Library fragment
+0:46 Core Kotlin Extensions
+0:46 Compose Layouts
+0:46 Android ConstraintLayout Core
+0:46 androidx.profileinstaller:profileinstaller
+47:47 play-services-base
+0:46 Android Support Library Coordinator Layout
+0:46 Android Support Library Async Layout Inflater
+0:46 AndroidX Futures
+0:46 Jetpack Compose Libraries BOM
+0:46 Android AppCompat Library
+0:46 SavedState Kotlin Extensions
+0:46 Android Emoji2 Compat
+0:46 Android Lifecycle LiveData Core
+0:46 Android Support Library loader
+0:46 Compose Material Ripple
+0:46 Android Lifecycle Kotlin Extensions
+0:46 Android Arch-Common
+0:46 androidx.customview:poolingcontainer
+0:46 Android Support Library Cursor Adapter
+0:46 Activity
+0:46 Android Tracing
+0:46 Android Lifecycle Runtime
+0:46 Android Preferences KTX
+0:46 Android Support Library v4
+0:46 Compose Util
+0:46 Android Support Library Custom View
+0:46 Jetpack WindowManager Library
+0:46 Android Lifecycle LiveData
+258272:47 kotlinx-coroutines-core
+0:46 Android Support RecyclerView v7
+0:46 Android Support VectorDrawable
+0:46 Android Lifecycle-Common for Java 8 Language
+47:47 play-services-tasks
+0:46 Android Lifecycle ViewModel with SavedState
+0:46 VersionedParcelable
+0:46 Activity Kotlin Extensions
+0:46 Compose Saveable
+0:46 Android Support Library collections
+0:46 Compose UI primitives
+0:46 Android Support Library Drawer Layout
+0:46 Android Support Preference v14
+0:46 Kotlin Stdlib
+0:46 LiveData Core Kotlin Extensions
+0:46 Android Navigation Runtime
+0:46 Kotlin Stdlib Jdk7
+0:46 Kotlin Stdlib Jdk8
+0:46 Compose Animation
+0:46 Android Support Library View Pager
+0:46 Compose Material3 Components
+0:46 Android Support Library Print
+0:46 Collections Kotlin Extensions
+0:46 Android Support Library core utils
+0:46 Android Navigation Common
+258272:47 kotlinx-coroutines-android
+0:46 Android Resources Library
+0:46 AndroidX Preference
+258272:47 kotlinx-coroutines-core
+0:46 Android Lifecycle ViewModel Kotlin Extensions
+0:46 Experimental annotation
+0:46 Compose Tooling API
+0:46 Android Support Library compat
+0:46 Android Lifecycle-Common
+0:46 Android Resource Inspection - Annotations
+0:46 Android ConstraintLayout
+0:46 Android Lifecycle Process
+0:46 Compose UI Text
+0:46 Activity Compose
