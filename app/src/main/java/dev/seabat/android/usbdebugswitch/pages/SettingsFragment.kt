@@ -11,7 +11,7 @@ import androidx.navigation.findNavController
 import dev.seabat.android.usbdebugswitch.compose.setting.SettingScreen
 import kotlinx.coroutines.launch
 
-class SettingFragment : Fragment() {
+class SettingsFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,

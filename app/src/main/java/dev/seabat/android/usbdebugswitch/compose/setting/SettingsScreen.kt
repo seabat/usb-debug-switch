@@ -1,11 +1,9 @@
 package dev.seabat.android.usbdebugswitch.compose.setting
 
-import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,7 +36,7 @@ fun SettingScreen(goBack: () -> Unit) {
                         horizontalArrangement = Arrangement.Center,
                     ) {
                         Text(
-                            text = stringResource(id = R.string.setting_title),
+                            text = stringResource(id = R.string.settings_title),
                             style = MaterialTheme.typography.headlineMedium
                         )
                     }
@@ -53,15 +51,12 @@ fun SettingScreen(goBack: () -> Unit) {
             )
         }
     ) { contentPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(contentPadding)
-                .background(color = Color(0xFFF2F0F4))
-                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-        ) {
-
-        }
+        SettingsContent(modifier = Modifier
+            .padding(contentPadding)
+            .fillMaxSize()
+            .background(color = Color(0xFFF2F0F4))
+            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+        )
     }
 }
 

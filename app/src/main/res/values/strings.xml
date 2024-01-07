@@ -37,5 +37,8 @@
 
     <string name="notification_permission_dialog_message">本アプリの通知が許可されてません。アプリの権限画面で「USB Debug Switch のすべての通知」を ON にしてください。</string>
 
-    <string name="setting_title">設定</string>
+    <string name="settings_title">設定</string>
+    <string name="settings_version">バージョン</string>
+    <string name="settings_privacy_policy">プライバシーポリシー</string>
+
 </resources>
