@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -32,7 +33,7 @@ fun SettingCard(title: String, onOff: String, onSwitch: (String) -> Unit) {
         Row(
             modifier = Modifier
                 .padding(start = 20.dp, end = 20.dp)
-                .height(100.dp),
+                .height(80.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -50,4 +51,10 @@ fun SettingCard(title: String, onOff: String, onSwitch: (String) -> Unit) {
             )
         }
     }
+}
+
+@Preview
+@Composable
+fun SettingCardPreview() {
+    SettingCard(title = "タイトル", onOff = "on", onSwitch = {})
 }

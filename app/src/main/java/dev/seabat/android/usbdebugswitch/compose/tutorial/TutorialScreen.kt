@@ -41,6 +41,7 @@ import dev.seabat.android.usbdebugswitch.compose.LoadingComponent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TutorialScreen(
     tutorialLoadedFlow: StateFlow<Boolean>,
@@ -51,113 +52,31 @@ fun TutorialScreen(
     val bitmaps by bitmapsFlow.collectAsState()
 
     if (tutorialLoaded) {
-        TutorialContent(bitmaps, onClose)
+        Scaffold(
+            topBar = {
+                CenterAlignedTopAppBar(
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFFF2F0F4)),
+                    title = {
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.tutorial_title),
+                                style = MaterialTheme.typography.headlineSmall
+                            )
+                        }
+                    }
+                )
+            }
+        ) { contentPadding ->
+            TutorialContent(modifier = Modifier.padding(contentPadding), bitmaps, onClose)
+        }
     } else {
         LoadingComponent()
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
-@Composable
-fun TutorialContent(
-    bitmaps: List<Bitmap>,
-    onClose: () -> Unit
-) {
-    val descriptions = arrayListOf(
-        stringResource(id = R.string.tutorial_description_1),
-        stringResource(id = R.string.tutorial_description_2),
-        stringResource(id = R.string.tutorial_description_3),
-        stringResource(id = R.string.tutorial_description_4),
-        stringResource(id = R.string.tutorial_description_5),
-        stringResource(id = R.string.tutorial_description_6),
-        stringResource(id = R.string.tutorial_description_7),
-        stringResource(id = R.string.tutorial_description_8),
-        stringResource(id = R.string.tutorial_description_9),
-        stringResource(id = R.string.tutorial_description_10),
-        stringResource(id = R.string.tutorial_description_11),
-    )
-
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFFF2F0F4)),
-                title = {
-                    Row(
-                        Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.tutorial_title),
-                            style = MaterialTheme.typography.headlineMedium
-                        )
-                    }
-                }
-            )
-        }
-    ) { contentPadding ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(contentPadding)
-            .background(color = Color(0xFFF2F0F4))
-            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-        ) {
-            Column(
-                modifier = Modifier.align(Alignment.TopCenter),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                val pagerState = rememberPagerState()
-                HorizontalPager(
-                    pageCount = bitmaps.size,
-                    beyondBoundsPageCount = bitmaps.size,
-                    state = pagerState,
-                    contentPadding = PaddingValues(
-//                horizontal = 32.dp,
-                        vertical = 16.dp
-                    ),
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        val bitmap = bitmaps[it].asImageBitmap()
-                        Image(
-                            bitmap = bitmap,
-                            "assetsImage",
-                            modifier = Modifier.fillMaxHeight(0.6f)
-                        )
-                        Text(
-                            text = descriptions[it],
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier
-                                .padding(top = 16.dp)
-                        )
-                    }
-                }
-                HorizontalPagerIndicator(
-                    pageCount = bitmaps.size,
-                    currentPage = pagerState.currentPage,
-                    targetPage = pagerState.targetPage,
-                    currentPageOffsetFraction = pagerState.currentPageOffsetFraction
-                )
-            }
-            Column(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(top = 32.dp)
-                    .clickable { onClose() },
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.baseline_close_40),
-                    contentDescription = "assetsImage",
-                )
-                Text(
-                    text = stringResource(id = R.string.tutorial_close),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-        }
-    }
-}
 
 @Preview
 @Composable

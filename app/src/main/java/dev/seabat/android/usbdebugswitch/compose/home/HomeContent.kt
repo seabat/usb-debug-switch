@@ -4,14 +4,17 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,6 +60,7 @@ fun HomeContent(
         .fillMaxSize()
         .background(color = Color(0xFFF2F0F4))
         .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+        .verticalScroll(rememberScrollState())
     ) {
         // 使い方
         Box(
@@ -121,13 +125,21 @@ fun HomeContent(
                     )
                 }
             )
-        }
 
-        Image(
-            modifier = Modifier.align(Alignment.BottomEnd).clickable { goAppSetting() },
-            painter = painterResource(id = R.drawable.outline_build_40),
-            contentDescription = null
-        )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 32.dp)
+                    .clickable { goAppSetting() },
+                horizontalAlignment = Alignment.End
+            ) {
+                Image(
+                    modifier = Modifier.clickable { goAppSetting() },
+                    painter = painterResource(id = R.drawable.outline_build_40),
+                    contentDescription = null
+                )
+            }
+        }
     }
 }
 
