@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_root"
+    app:startDestination="@id/dest_tutorial">
+
+    <!-- チュートリアル画面 -->
+    <fragment
+        android:id="@+id/dest_tutorial"
+        android:name="dev.seabat.android.usbdebugswitch.pages.TutorialFragment"
+        android:label="@string/tutorial_title">
+        <action
+            android:id="@+id/action_to_home"
+            app:destination="@id/dest_home"
+            app:popUpTo="@id/dest_tutorial"
+            app:popUpToInclusive="true">
+        </action>
+    </fragment>
+
+    <!-- ホーム画面 -->
+    <fragment
+        android:id="@+id/dest_home"
+        android:name="dev.seabat.android.usbdebugswitch.pages.HomeFragment"
+        android:label="@string/app_name">
+        <action
+            android:id="@+id/action_to_tutorial"
+            app:destination="@id/dest_tutorial">
+        </action>
+        <action
+            android:id="@+id/action_to_setting"
+            app:destination="@id/dest_setting">
+        </action>
+    </fragment>
+
+    <!-- 設定画面 -->
+    <fragment
+        android:id="@+id/dest_setting"
+        android:name="dev.seabat.android.usbdebugswitch.pages.SettingsFragment"
+        android:label="@string/settings_title">
+        <action
+            android:id="@+id/action_to_license"
+            app:destination="@id/dest_license">
+        </action>
+    </fragment>
+
+    <!-- ライセンス画面 -->
+    <fragment
+        android:id="@+id/dest_license"
+        android:name="dev.seabat.android.usbdebugswitch.pages.LicenseFragment"
+        android:label="@string/settings_title">
+    </fragment>
+</navigation>

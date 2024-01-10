@@ -2,45 +2,45 @@
     <string name="app_name">USB Debug Switch</string>
     <string name="dialog_msg_goto_overlay_setting">本アプリを使用するには他のアプリの上に本アプリがオーバーレイすることを許可してください。</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_enable_receive_boot_complete">自動起動</string>
+    <string name="tutorial_title">USB Debug Switch の使い方</string>
+    <string name="tutorial_close">閉じる</string>
+    <string name="tutorial_description_1">USB デバッグの ON/OFF を切り替えるには予め開発者向けオプションを有効にする必要があります。[設定] > [デバイス情報] に移動し、[ビルド番号] オプションを 7 回タップして開発者向けオプションが有効にしてください。</string>
+    <string name="tutorial_description_2">通知の送信を許可してください。本アプリがバックグラウンドで動作していることを通知領域に表示するために許可するのであって、本アプリが PUSH 通知を受信することはありません。</string>
+    <string name="tutorial_description_3">本アプリをバックグラウンドに移動させた後に USB デバッグの ON/OFF を切り替えたい場合は、「スイッチを常に表示」を ON に切り替えてください。</string>
+    <string name="tutorial_description_4">(Android10以上の場合)\n他のアプリの上に重ねて表示するアプリとして「USB Debug Switch」を選択してください。</string>
+    <string name="tutorial_description_5">「他のアプリの上に重ねて表示できるようにする」を ON にし、左上の ← ボタンで本アプリに戻ってください。</string>
+    <string name="tutorial_description_6">設定アプリから本アプリに戻ると蜘蛛のアイコンが表示されています。このアイコンは本アプリがバックグラウンドに移動しても他のアプリの上に常に表示されます。</string>
+    <string name="tutorial_description_7">蜘蛛のアイコンをタップすると設定アプリの開発者向けオプション画面が表示されます。</string>
+    <string name="tutorial_description_8">USBデバッグを ON にするとダイアログが表示されるので OK を選択してください。</string>
+    <string name="tutorial_description_9">USBデバッグ設定が ON に切り替わったことを確認してから左上の ← ボタンで本アプリに戻ってください。</string>
+    <string name="tutorial_description_10">ピンク色の蜘蛛のアイコンが表示されます。</string>
+    <string name="tutorial_description_11">本アプリがバックグラウンドに移動しても蜘蛛のアイコンは常に表示されます。このアイコンはドラッグ＆ドロップで好きな場所に移動させることができます。</string>
 
-    <string name="notification_channel_overlay">Overlay</string>
-    <string name="notification_overlay_title">Now overlaying</string>
+    <string name="tutorial">使い方</string>
+
+    <string name="notification_channel_overlay">オーバーレイ</string>
+    <string name="notification_overlay_title">切り替えスイッチを常に他のアプリの上に表示しています</string>
 
     <string name="title_setting_usb_debug">USBデバッグ</string>
     <string name="setting_usb_debug_on">ON</string>
     <string name="setting_usb_debug_off">OFF</string>
 
-    <string name="title_setting_overlay">画面オーバーレイ</string>
+    <string name="title_setting_overlay">スイッチを常に表示</string>
     <string name="setting_overlay_on">ON</string>
     <string name="setting_overlay_off">OFF</string>
 
     <string name="title_setting_internet">インターネット接続</string>
+    <string name="setting_mobile_data_connection">モバイルデータ通信</string>
+    <string name="setting_wifi_connection">Wi-Fi通信</string>
     <string name="setting_internet_on">ON</string>
     <string name="setting_internet_off">OFF</string>
 
     <string name="notification_permission_dialog_message">本アプリの通知が許可されてません。アプリの権限画面で「USB Debug Switch のすべての通知」を ON にしてください。</string>
 
-    <!-- Preference -->
-    <string-array name="pref_horizontal_axis_entries">
-        <item>"中央(CENTER)"</item>
-        <item>"左(LEFT)"</item>
-        <item>"右(RIGHT)"</item>
-    </string-array>
-    <string-array name="pref_horizontal_axis_values">
-        <item>"CENTER"</item>
-        <item>"LEFT"</item>
-        <item>"RIGHT"</item>
-    </string-array>
+    <string name="settings_title">設定</string>
+    <string name="settings_version">バージョン</string>
+    <string name="settings_privacy_policy">プライバシーポリシー</string>
+    <string name="settings_license">OSS ライセンス</string>
 
-    <string-array name="pref_setting_overlay_entries">
-        <item>"表示"</item>
-        <item>"非表示"</item>
-    </string-array>
-    <string-array name="pref_setting_overlay_values">
-        <item>@string/setting_overlay_on</item>
-        <item>@string/setting_overlay_off</item>
-    </string-array>
+    <string name="license_title">OSS ライセンス</string>
 </resources>

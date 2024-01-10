@@ -11,15 +11,16 @@ import android.os.Handler
 import android.os.IBinder
 import androidx.annotation.RequiresApi
 import dev.seabat.android.usbdebugswitch.MainActivity
-import dev.seabat.android.usbdebugswitch.MainActivity.Companion.ACTION_SWITCH_INTERNET
-import dev.seabat.android.usbdebugswitch.MainActivity.Companion.ACTION_SWITCH_OVERLAY_STATUS
-import dev.seabat.android.usbdebugswitch.MainActivity.Companion.KEY_INTERNET_STATUS
-import dev.seabat.android.usbdebugswitch.MainActivity.Companion.KEY_OVERLAY_STATUS
-import dev.seabat.android.usbdebugswitch.MainActivity.Companion.KEY_SELECTED_OVERLAY
 import dev.seabat.android.usbdebugswitch.view.OverlayView
 import dev.seabat.android.usbdebugswitch.R
 import dev.seabat.android.usbdebugswitch.constants.OverlayStateType
 import dev.seabat.android.usbdebugswitch.constants.SelectedOverlayType
+import dev.seabat.android.usbdebugswitch.pages.HomeFragment.Companion.ACTION_LAUNCH_DEVELOPER_OPTIONS
+import dev.seabat.android.usbdebugswitch.pages.HomeFragment.Companion.ACTION_SWITCH_INTERNET
+import dev.seabat.android.usbdebugswitch.pages.HomeFragment.Companion.ACTION_SWITCH_OVERLAY_STATUS
+import dev.seabat.android.usbdebugswitch.pages.HomeFragment.Companion.KEY_INTERNET_STATUS
+import dev.seabat.android.usbdebugswitch.pages.HomeFragment.Companion.KEY_OVERLAY_STATUS
+import dev.seabat.android.usbdebugswitch.pages.HomeFragment.Companion.KEY_SELECTED_OVERLAY
 import dev.seabat.android.usbdebugswitch.repositories.InternetStateRepository
 import dev.seabat.android.usbdebugswitch.repositories.OverlayStateRepository
 import dev.seabat.android.usbdebugswitch.repositories.SelectedOverlayRepository
@@ -121,11 +122,11 @@ class OverlayService() : Service() {
         mOverlay ?: run {
             mOverlay = OverlayView(this, object : OnSwitchListener {
                 override fun onUsbDebugSwitch() {
-//                    Intent(baseContext, MainActivity::class.java).let {
-//                        it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-//                        startActivity(it)
-//                    }
-                    DeveloperOptionsLauncher.startOutsideOfActivity(baseContext)
+                    sendBroadcast(
+                        Intent().apply {
+                            action = ACTION_LAUNCH_DEVELOPER_OPTIONS
+                        }
+                    )
                 }
 
                 override fun onInternetSwitch() {
@@ -286,7 +287,7 @@ class OverlayService() : Service() {
 
     private fun doStopForeground(onStopService: () -> Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            stopForeground(Service.STOP_FOREGROUND_REMOVE or Service.STOP_FOREGROUND_DETACH)
+            stopForeground(STOP_FOREGROUND_REMOVE)
         } else {
             stopForeground(true)
         }
