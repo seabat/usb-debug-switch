@@ -154,7 +154,9 @@ class HomeFragment : Fragment(){
                         }
                     },
                     goAppSetting = {
-                        lifecycleScope.launch {}
+                        lifecycleScope.launch {
+                            findNavController().navigate(HomeFragmentDirections.actionToSetting())
+                        }
                     }
                 )
             }

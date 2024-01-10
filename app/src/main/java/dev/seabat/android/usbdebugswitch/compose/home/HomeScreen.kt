@@ -1,36 +1,22 @@
 package dev.seabat.android.usbdebugswitch.compose.home
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -56,11 +42,6 @@ fun HomeScreen(
     goTutorial: () -> Unit,
     goAppSetting: () -> Unit
 ) {
-    val internetState by internetStateFlow.collectAsState()
-    val overlayState by overlayStateFlow.collectAsState()
-    val usbDebugState by usbDebugStateFlow.collectAsState()
-    val selectedSettingState by selectedSettingStateFlow.collectAsState()
-
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -79,121 +60,27 @@ fun HomeScreen(
             )
         }
     ) { contentPadding ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(contentPadding)
-            .background(color = Color(0xFFF2F0F4))
-            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-        ) {
-            Column(
-                modifier = Modifier.align(Alignment.TopCenter),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                // アプリアイコン
-                Image(
-                    modifier = Modifier
-                        .padding(vertical = 8.dp)
-                        .size(180.dp),
-                    painter = painterResource(id = R.mipmap.ic_launcher_foreground),
-                    contentDescription = stringResource(id = R.string.app_name)
-                )
-
-                // 使い方
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp)
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .align(Alignment.CenterEnd)
-                            .border(
-                                width = 2.dp,
-                                color = Color(0xFF75565c),
-                                shape = RoundedCornerShape(20.dp)
-                            )
-                            .clickable { goTutorial() }
-                            .padding(top = 5.dp, start = 20.dp, end = 20.dp, bottom = 5.dp),
-                        text = stringResource(id = R.string.tutorial),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color(0xFF75565c)
-                    )
-                }
-
-                // スイッチを常に表示
-                OverlaySettingCard(
-                    overlayState =  overlayState,
-                    selectedSettingState = selectedSettingState,
-                    onSwitch = onOverlaySwitch,
-                    onToggleSetting = onToggleSetting
-                )
-
-                // USB デバッグ
-                SettingCard(
-                    title =  stringResource(id = R.string.title_setting_usb_debug),
-                    onOff =  usbDebugState.key,
-                    onSwitch = { onUsbDebugSwitch() }
-                )
-
-                // インターネット接続
-                InternetSettingCard(
-                    onOff =  internetState.key,
-                    onSwitch = {
-                        onInternetSwitch(
-                            if (it == "on") {
-                                InternetStateType.OFF
-                            } else {
-                                InternetStateType.ON
-                            }
-                        )
-                    }
-                )
-            }
-            Image(
-                modifier = Modifier.align(Alignment.BottomEnd).clickable { goAppSetting() },
-                painter = painterResource(id = R.drawable.outline_build_40),
-                contentDescription = null
-            )
-        }
-    }
-}
-
-@Composable
-fun SettingCard(title: String, onOff: String, onSwitch: (String) -> Unit) {
-    OutlinedCard(
-        modifier = Modifier
-            .padding(bottom = 16.dp)
-            .fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFFBEFF6)
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
-        )
-    ) {
-        Row(
+        HomeContent(
             modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp)
-                .height(100.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                modifier = Modifier.weight(1.0f),
-                text = title,
-                style = MaterialTheme.typography.headlineSmall
-            )
-            Switch(
-                checked = onOff == "on",
-                onCheckedChange = { onSwitch(onOff) },
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = Color(0xFFFFFFFF),
-                    checkedTrackColor = Color(0xFF75565c)
-                )
-            )
-        }
+                .padding(contentPadding)
+                .fillMaxSize()
+                .background(color = Color(0xFFF2F0F4))
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                .verticalScroll(rememberScrollState()),
+            internetStateFlow = internetStateFlow,
+            overlayStateFlow = overlayStateFlow,
+            usbDebugStateFlow = usbDebugStateFlow,
+            selectedSettingStateFlow = selectedSettingStateFlow,
+            onInternetSwitch = onInternetSwitch,
+            onOverlaySwitch = onOverlaySwitch,
+            onUsbDebugSwitch = onUsbDebugSwitch,
+            onToggleSetting = onToggleSetting,
+            goTutorial = goTutorial,
+            goAppSetting = goAppSetting
+        )
     }
 }
+
 
 @Preview
 @Composable
