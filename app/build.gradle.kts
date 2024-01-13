@@ -15,8 +15,8 @@ android {
         applicationId = "dev.seabat.android.usbdebugswitch"
         minSdk = 26
         targetSdk = 33
-        versionCode = 6
-        versionName = "0.14.0"
+        versionCode = 7
+        versionName = "1.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
