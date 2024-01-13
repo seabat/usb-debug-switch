@@ -13,7 +13,11 @@ import dev.seabat.android.usbdebugswitch.BuildConfig
 import dev.seabat.android.usbdebugswitch.R
 
 @Composable
-fun SettingsContent(modifier: Modifier = Modifier, launchBrowser: () -> Unit, goLicense: () -> Unit) {
+fun SettingsContent(
+    modifier: Modifier = Modifier,
+    goPrivacyPolicy: () -> Unit,
+    goLicense: () -> Unit
+) {
     Column(modifier = modifier) {
         SettingsItem(
             painterResource(id = R.drawable.baseline_info_outline_30),
@@ -23,7 +27,7 @@ fun SettingsContent(modifier: Modifier = Modifier, launchBrowser: () -> Unit, go
         SettingsItem(
             painterResource(id = R.drawable.baseline_lock_outline_30),
             stringResource(id = R.string.settings_privacy_policy),
-            onClick = { launchBrowser() }
+            onClick = { goPrivacyPolicy() }
         )
         SettingsItem(
             painterResource(id = R.drawable.outline_article_30),
@@ -37,5 +41,5 @@ fun SettingsContent(modifier: Modifier = Modifier, launchBrowser: () -> Unit, go
 @Preview
 @Composable
 fun SettingsContentPreview() {
-    SettingsContent(launchBrowser = {}, goLicense = {})
+    SettingsContent(goPrivacyPolicy = {}, goLicense = {})
 }

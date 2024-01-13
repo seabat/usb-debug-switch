@@ -8,11 +8,10 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import dev.seabat.android.usbdebugswitch.compose.setting.SettingScreen
+import dev.seabat.android.usbdebugswitch.compose.privacypolicy.PrivacyPolicyScreen
 import kotlinx.coroutines.launch
 
-class SettingsFragment : Fragment() {
-
+class PrivacyPolicyFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -20,19 +19,11 @@ class SettingsFragment : Fragment() {
     ): View {
         val view = ComposeView(requireContext()).apply {
             setContent {
-                SettingScreen(
-                    goPrivacyPolicy = {
-                        findNavController().navigate(SettingsFragmentDirections.actionToPrivacyPolicy())
-                    },
-                    goLicense = {
-                        findNavController().navigate(SettingsFragmentDirections.actionToLicense())
-                    },
-                    goBack = {
-                        lifecycleScope.launch {
-                            findNavController().popBackStack()
-                        }
+                PrivacyPolicyScreen() {
+                    lifecycleScope.launch {
+                        findNavController().popBackStack()
                     }
-                )
+                }
             }
         }
         return view
