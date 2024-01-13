@@ -38,15 +38,26 @@
         android:name="dev.seabat.android.usbdebugswitch.pages.SettingsFragment"
         android:label="@string/settings_title">
         <action
+            android:id="@+id/action_to_privacy_policy"
+            app:destination="@id/dest_privacy_policy">
+        </action>
+        <action
             android:id="@+id/action_to_license"
             app:destination="@id/dest_license">
         </action>
+    </fragment>
+
+    <!-- プライバシーポリシー＾画面 -->
+    <fragment
+        android:id="@+id/dest_privacy_policy"
+        android:name="dev.seabat.android.usbdebugswitch.pages.PrivacyPolicyFragment"
+        android:label="@string/privacy_policy_title">
     </fragment>
 
     <!-- ライセンス画面 -->
     <fragment
         android:id="@+id/dest_license"
         android:name="dev.seabat.android.usbdebugswitch.pages.LicenseFragment"
-        android:label="@string/settings_title">
+        android:label="@string/license_title">
     </fragment>
 </navigation>
