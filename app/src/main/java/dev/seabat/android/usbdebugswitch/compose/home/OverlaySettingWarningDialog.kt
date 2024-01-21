@@ -8,14 +8,14 @@ import androidx.compose.ui.res.stringResource
 import dev.seabat.android.usbdebugswitch.R
 
 @Composable
-fun SwitchOverlayStateWarningDialog(onClose: () -> Unit) {
+fun OverlaySettingWarningDialog(onClose: () -> Unit) {
     AlertDialog(
         onDismissRequest = { onClose() },
         confirmButton = {
             TextButton(
                 onClick = { onClose() }
             ) {
-                Text(stringResource(id = R.string.overlay_state_warning_dialog_close))
+                Text(stringResource(id = R.string.overlay_setting_warning_dialog_close))
             }
         },
         dismissButton = {},

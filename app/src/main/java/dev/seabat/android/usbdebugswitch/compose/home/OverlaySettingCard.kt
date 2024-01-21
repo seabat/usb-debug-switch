@@ -33,7 +33,7 @@ fun OverlaySettingCard(
     title: String = stringResource(id = R.string.title_setting_overlay),
     overlayState: OverlayStateType,
     selectedSettingState: SelectedOverlayType,
-    onOverlayStateWarningEnable: () -> Unit,
+    onOverlaySettingWarning: () -> Unit,
     onSwitch: () -> Unit,
     onToggleSetting: (SelectedOverlayType) -> Unit
 ) {
@@ -83,7 +83,7 @@ fun OverlaySettingCard(
                                         }
                                     )
                                 } else {
-                                    onOverlayStateWarningEnable()
+                                    onOverlaySettingWarning()
                                 }
                             }
                         )
@@ -115,7 +115,7 @@ fun OverlaySettingCardPreview() {
         title = "画面オーバーレイ",
         overlayState = OverlayStateType.ON,
         selectedSettingState = SelectedOverlayType.USB_DEBUG,
-        onOverlayStateWarningEnable = {},
+        onOverlaySettingWarning = {},
         onSwitch = {},
         onToggleSetting = {}
     )

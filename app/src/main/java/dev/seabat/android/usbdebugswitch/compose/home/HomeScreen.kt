@@ -46,9 +46,14 @@ fun HomeScreen(
     goTutorial: () -> Unit,
     goAppSetting: () -> Unit
 ) {
-    var shouldDialogShow by remember { mutableStateOf(false) }
-    if (shouldDialogShow) {
-        SwitchOverlayStateWarningDialog { shouldDialogShow = false }
+    var shouldOverlaySettingWarningShow by remember { mutableStateOf(false) }
+    if (shouldOverlaySettingWarningShow) {
+        OverlaySettingWarningDialog { shouldOverlaySettingWarningShow = false }
+    }
+
+    var shouldInternetSettingWarningShow by remember { mutableStateOf(false) }
+    if (shouldInternetSettingWarningShow) {
+        InternetSettingWarningDialog { shouldInternetSettingWarningShow = false }
     }
 
     Scaffold(
@@ -80,8 +85,9 @@ fun HomeScreen(
             overlayStateFlow = overlayStateFlow,
             usbDebugStateFlow = usbDebugStateFlow,
             selectedSettingStateFlow = selectedSettingStateFlow,
+            onInternetSettingWarning = { shouldInternetSettingWarningShow = true },
             onInternetSwitch = onInternetSwitch,
-            onOverlayStateWarningEnable = { shouldDialogShow = true },
+            onOverlaySettingWarning = { shouldOverlaySettingWarningShow = true },
             onOverlaySwitch = onOverlaySwitch,
             onUsbDebugSwitch = onUsbDebugSwitch,
             onToggleSetting = onToggleSetting,

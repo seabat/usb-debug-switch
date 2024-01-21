@@ -1,5 +1,6 @@
 package dev.seabat.android.usbdebugswitch.compose.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,6 +27,7 @@ import dev.seabat.android.usbdebugswitch.R
 @Composable
 fun InternetSettingCard(
     title: String = stringResource(id = R.string.title_setting_internet),
+    onInternetSettingWarning: () -> Unit,
     onOff: String,
     onSwitch: (String) -> Unit
 ) {
@@ -51,7 +53,7 @@ fun InternetSettingCard(
                     text = title,
                     style = MaterialTheme.typography.headlineSmall
                 )
-                Column {
+                Column(modifier = Modifier.clickable { onInternetSettingWarning() }) {
                     Row(
                         modifier = Modifier.height(30.dp),
                         verticalAlignment = Alignment.CenterVertically
@@ -102,5 +104,5 @@ fun InternetSettingCard(
 @Preview
 @Composable
 fun InternetSettingCardPreview() {
-    InternetSettingCard(onOff = "on", onSwitch = {})
+    InternetSettingCard(onOff = "on", onInternetSettingWarning = {}, onSwitch = {})
 }

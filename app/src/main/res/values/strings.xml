@@ -39,7 +39,8 @@
 
     <string name="notification_permission_dialog_message">本アプリの通知が許可されてません。アプリの権限画面で「USB Debug Switch のすべての通知」を ON にしてください。</string>
     <string name="overlay_state_switch_warning">「スイッチを常に表示」を ON にしてください</string>
-    <string name="overlay_state_warning_dialog_close">閉じる</string>
+    <string name="overlay_setting_warning_dialog_close">閉じる</string>
+    <string name="internet_setting_switch_warning">本バージョンは Wi-Fi 通信の ON/OFF 切り替えのみをサポートし、モバイルデータ通信の ON/OFF 切り替えはサポートしていません</string>
 
     <!-- 設定 -->
     <string name="settings_title">設定</string>
