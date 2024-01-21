@@ -1,5 +1,8 @@
 package dev.seabat.android.usbdebugswitch.constants
 
+/**
+ * オーバーレイの ON/OFF 状態
+ */
 enum class OverlayStateType(val key: String) {
     ON("on"),
     OFF("off");
@@ -10,5 +13,8 @@ enum class OverlayStateType(val key: String) {
         } catch(e: NoSuchElementException) {
             OFF
         }
+    }
+    fun isOn(): Boolean {
+        return key== ON.key
     }
 }

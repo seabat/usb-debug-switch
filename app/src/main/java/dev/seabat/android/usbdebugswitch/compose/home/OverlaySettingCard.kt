@@ -14,6 +14,10 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,6 +33,7 @@ fun OverlaySettingCard(
     title: String = stringResource(id = R.string.title_setting_overlay),
     overlayState: OverlayStateType,
     selectedSettingState: SelectedOverlayType,
+    onOverlaySettingWarning: () -> Unit,
     onSwitch: () -> Unit,
     onToggleSetting: (SelectedOverlayType) -> Unit
 ) {
@@ -69,13 +74,17 @@ fun OverlaySettingCard(
                                 SelectedOverlayType.INTERNET -> radioOptions[1]
                             },
                             onClick = {
-                                onToggleSetting(
-                                    when(settingName) {
-                                        radioOptions[0] -> SelectedOverlayType.USB_DEBUG
-                                        radioOptions[1] -> SelectedOverlayType.INTERNET
-                                        else -> SelectedOverlayType.USB_DEBUG
-                                    }
-                                )
+                                if (overlayState.isOn()) {
+                                    onToggleSetting(
+                                        when(settingName) {
+                                            radioOptions[0] -> SelectedOverlayType.USB_DEBUG
+                                            radioOptions[1] -> SelectedOverlayType.INTERNET
+                                            else -> SelectedOverlayType.USB_DEBUG
+                                        }
+                                    )
+                                } else {
+                                    onOverlaySettingWarning()
+                                }
                             }
                         )
                         Text(
@@ -106,6 +115,7 @@ fun OverlaySettingCardPreview() {
         title = "画面オーバーレイ",
         overlayState = OverlayStateType.ON,
         selectedSettingState = SelectedOverlayType.USB_DEBUG,
+        onOverlaySettingWarning = {},
         onSwitch = {},
         onToggleSetting = {}
     )

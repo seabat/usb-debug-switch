@@ -1,5 +1,8 @@
 package dev.seabat.android.usbdebugswitch.constants
 
+/**
+ * オーバーレイ操作対象 (ex. USBデバッグ)
+ */
 enum class SelectedOverlayType(val key: String) {
     USB_DEBUG("usb_debug"),
     INTERNET("internet");
