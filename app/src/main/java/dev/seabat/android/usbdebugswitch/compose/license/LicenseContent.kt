@@ -14,14 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.seabat.android.usbdebugswitch.utils.LibraryLicense
+import dev.seabat.android.usbdebugswitch.utils.LibraryLicenseList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun LicenseContent(
     modifier: Modifier = Modifier,
-    licensesStateFlow: StateFlow<List<LibraryLicense>>
+    licensesStateFlow: StateFlow<LibraryLicenseList>
 ) {
     val licensesState by licensesStateFlow.collectAsState()
     LazyColumn(modifier = modifier) {
@@ -40,6 +40,6 @@ fun LicenseContent(
 @Composable
 fun LicenseContentPreview() {
     LicenseContent(
-        licensesStateFlow = MutableStateFlow<List<LibraryLicense>>(arrayListOf())
+        licensesStateFlow = MutableStateFlow(LibraryLicenseList(arrayListOf()))
     )
 }
