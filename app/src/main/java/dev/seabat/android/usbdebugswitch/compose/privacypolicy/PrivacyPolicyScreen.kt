@@ -63,6 +63,6 @@ fun PrivacyPolicyScreen(
 fun WebViewInCompose() {
     AndroidViewBinding(ScreenPrivacyPolicyBinding::inflate) {
         this.webview.webViewClient = WebViewClient()
-        this.webview.loadUrl("https://seabat.notion.site/USB-Debug-Switch-980795204e124ac2b229ca6508824bff")
+        this.webview.loadUrl("file:///android_asset/privacy_policy.html")
     }
 }
