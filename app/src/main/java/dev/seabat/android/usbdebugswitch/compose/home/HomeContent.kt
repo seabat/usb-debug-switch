@@ -39,6 +39,7 @@ fun HomeContent(
     usbDebugStateFlow: StateFlow<UsbDebugStateType>,
     selectedSettingStateFlow: StateFlow<SelectedOverlayType>,
     onInternetSwitch: (InternetStateType) -> Unit,
+    onOverlayStateWarningEnable: () -> Unit,
     onOverlaySwitch: () -> Unit,
     onUsbDebugSwitch: () -> Unit,
     onToggleSetting: (SelectedOverlayType) -> Unit,
@@ -90,6 +91,7 @@ fun HomeContent(
             OverlaySettingCard(
                 overlayState =  overlayState,
                 selectedSettingState = selectedSettingState,
+                onOverlayStateWarningEnable = onOverlayStateWarningEnable,
                 onSwitch = onOverlaySwitch,
                 onToggleSetting = onToggleSetting
             )
@@ -141,6 +143,7 @@ fun HomeContentPreview() {
         usbDebugStateFlow = MutableStateFlow(UsbDebugStateType.OFF),
         selectedSettingStateFlow = MutableStateFlow(SelectedOverlayType.USB_DEBUG),
         onInternetSwitch = {},
+        onOverlayStateWarningEnable = {},
         onOverlaySwitch = {},
         onUsbDebugSwitch = {},
         onToggleSetting = {},

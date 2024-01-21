@@ -15,6 +15,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -42,6 +46,11 @@ fun HomeScreen(
     goTutorial: () -> Unit,
     goAppSetting: () -> Unit
 ) {
+    var shouldDialogShow by remember { mutableStateOf(false) }
+    if (shouldDialogShow) {
+        SwitchOverlayStateWarningDialog { shouldDialogShow = false }
+    }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -72,6 +81,7 @@ fun HomeScreen(
             usbDebugStateFlow = usbDebugStateFlow,
             selectedSettingStateFlow = selectedSettingStateFlow,
             onInternetSwitch = onInternetSwitch,
+            onOverlayStateWarningEnable = { shouldDialogShow = true },
             onOverlaySwitch = onOverlaySwitch,
             onUsbDebugSwitch = onUsbDebugSwitch,
             onToggleSetting = onToggleSetting,

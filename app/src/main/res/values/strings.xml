@@ -2,6 +2,7 @@
     <string name="app_name">USB Debug Switch</string>
     <string name="dialog_msg_goto_overlay_setting">本アプリを使用するには他のアプリの上に本アプリがオーバーレイすることを許可してください。</string>
 
+    <!-- チュートリアル -->
     <string name="tutorial_title">USB Debug Switch の使い方</string>
     <string name="tutorial_close">閉じる</string>
     <string name="tutorial_description_1">USB デバッグの ON/OFF を切り替えるには予め開発者向けオプションを有効にする必要があります。[設定] > [デバイス情報] に移動し、[ビルド番号] オプションを 7 回タップして開発者向けオプションが有効にしてください。</string>
@@ -16,6 +17,7 @@
     <string name="tutorial_description_10">ピンク色の蜘蛛のアイコンが表示されます。</string>
     <string name="tutorial_description_11">本アプリがバックグラウンドに移動しても蜘蛛のアイコンは常に表示されます。このアイコンはドラッグ＆ドロップで好きな場所に移動させることができます。</string>
 
+    <!-- ホーム -->
     <string name="tutorial">使い方</string>
 
     <string name="notification_channel_overlay">オーバーレイ</string>
@@ -36,13 +38,18 @@
     <string name="setting_internet_off">OFF</string>
 
     <string name="notification_permission_dialog_message">本アプリの通知が許可されてません。アプリの権限画面で「USB Debug Switch のすべての通知」を ON にしてください。</string>
+    <string name="overlay_state_switch_warning">「スイッチを常に表示」を ON にしてください</string>
+    <string name="overlay_state_warning_dialog_close">閉じる</string>
 
+    <!-- 設定 -->
     <string name="settings_title">設定</string>
     <string name="settings_version">バージョン</string>
     <string name="settings_privacy_policy">プライバシーポリシー</string>
     <string name="settings_license">OSS ライセンス</string>
 
+    <!-- ライセンス -->
     <string name="license_title">OSS ライセンス</string>
 
+    <!-- プライバシーポリシー -->
     <string name="privacy_policy_title">プライバシーポリシー</string>
 </resources>
