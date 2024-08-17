@@ -7,9 +7,9 @@ import android.util.Log
 object ServiceStatusChecker {
     // constants
 
-    private val DEBUG = false
+    private const val DEBUG = false
 
-    val TAG = "ServiceStatusChecker"
+    private const val TAG = "ServiceStatusChecker"
 
     fun isServiceRunningInForeground(context: Context, className: String): Boolean {
         val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
@@ -21,7 +21,6 @@ object ServiceStatusChecker {
                 if (service.foreground) {
                     return true
                 }
-
             }
         }
         return false

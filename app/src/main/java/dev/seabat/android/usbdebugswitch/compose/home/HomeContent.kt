@@ -79,7 +79,6 @@ fun HomeContent(
             modifier = Modifier.align(Alignment.TopCenter),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             // アプリアイコン
             Image(
                 modifier = Modifier.size(120.dp).clip(CircleShape),
@@ -87,10 +86,9 @@ fun HomeContent(
                 contentDescription = stringResource(id = R.string.app_name),
             )
 
-
             // スイッチを常に表示
             OverlaySettingCard(
-                overlayState =  overlayState,
+                overlayState = overlayState,
                 selectedSettingState = selectedSettingState,
                 onOverlaySettingWarning = onOverlaySettingWarning,
                 onSwitch = onOverlaySwitch,
@@ -99,14 +97,14 @@ fun HomeContent(
 
             // USB デバッグ
             SettingCard(
-                title =  stringResource(id = R.string.title_setting_usb_debug),
-                onOff =  usbDebugState.key,
+                title = stringResource(id = R.string.title_setting_usb_debug),
+                onOff = usbDebugState.key,
                 onSwitch = { onUsbDebugSwitch() }
             )
 
             // インターネット接続
             InternetSettingCard(
-                onOff =  internetState.key,
+                onOff = internetState.key,
                 onInternetSettingWarning = onInternetSettingWarning,
                 onSwitch = {
                     onInternetSwitch(

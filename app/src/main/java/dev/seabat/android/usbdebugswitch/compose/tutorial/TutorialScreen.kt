@@ -75,7 +75,6 @@ fun TutorialScreen(
     }
 }
 
-
 @Preview
 @Composable
 fun TutorialScreenPreview() {

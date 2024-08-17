@@ -14,10 +14,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -66,17 +62,20 @@ fun OverlaySettingCard(
                 )
 
                 radioOptions.forEach { settingName ->
-                    Row(modifier = Modifier.height(30.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        modifier = Modifier.height(30.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         RadioButton(
                             colors = RadioButtonDefaults.colors(selectedColor = Color(0xFF75565c)),
-                            selected = settingName == when(selectedSettingState) {
+                            selected = settingName == when (selectedSettingState) {
                                 SelectedOverlayType.USB_DEBUG -> radioOptions[0]
                                 SelectedOverlayType.INTERNET -> radioOptions[1]
                             },
                             onClick = {
                                 if (overlayState.isOn()) {
                                     onToggleSetting(
-                                        when(settingName) {
+                                        when (settingName) {
                                             radioOptions[0] -> SelectedOverlayType.USB_DEBUG
                                             radioOptions[1] -> SelectedOverlayType.INTERNET
                                             else -> SelectedOverlayType.USB_DEBUG
@@ -97,7 +96,7 @@ fun OverlaySettingCard(
             }
 
             Switch(
-                checked = overlayState ==  OverlayStateType.ON,
+                checked = overlayState == OverlayStateType.ON,
                 onCheckedChange = { onSwitch() },
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = Color(0xFFFFFFFF),

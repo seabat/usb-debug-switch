@@ -22,7 +22,9 @@ class SettingsFragment : Fragment() {
             setContent {
                 SettingScreen(
                     goPrivacyPolicy = {
-                        findNavController().navigate(SettingsFragmentDirections.actionToPrivacyPolicy())
+                        findNavController().navigate(
+                            SettingsFragmentDirections.actionToPrivacyPolicy()
+                        )
                     },
                     goLicense = {
                         findNavController().navigate(SettingsFragmentDirections.actionToLicense())

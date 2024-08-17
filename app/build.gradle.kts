@@ -9,7 +9,7 @@ plugins {
 
 android {
     compileSdk = 34
-    namespace ="dev.seabat.android.usbdebugswitch"
+    namespace = "dev.seabat.android.usbdebugswitch"
 
     defaultConfig {
         applicationId = "dev.seabat.android.usbdebugswitch"
@@ -53,16 +53,16 @@ dependencies {
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
-    //coroutine
+    // coroutine
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
 
-    //navigation
+    // navigation
     implementation("androidx.navigation:navigation-fragment:2.6.0")
 
     // oss license
     implementation("com.google.android.gms:play-services-oss-licenses:17.0.1")
 
-    //compose
+    // compose
     val composeBom = platform("androidx.compose:compose-bom:2023.01.00")
     implementation(composeBom)
     implementation("androidx.compose.ui:ui-tooling-preview")

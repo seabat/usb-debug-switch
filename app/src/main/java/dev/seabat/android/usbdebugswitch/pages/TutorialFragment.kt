@@ -68,7 +68,9 @@ class TutorialFragment : Fragment() {
                     ),
                     // 5
                     BitmapFactory.decodeStream(
-                        requireContext().assets.open("screenshot_usb_debug_switch_overlay_setting.png")
+                        requireContext().assets.open(
+                            "screenshot_usb_debug_switch_overlay_setting.png"
+                        )
                     ),
                     // 6
                     BitmapFactory.decodeStream(

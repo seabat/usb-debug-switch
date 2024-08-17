@@ -26,7 +26,7 @@ fun LicenseContent(
     val licensesState by licensesStateFlow.collectAsState()
     LazyColumn(modifier = modifier) {
         items(licensesState) {
-            Column() {
+            Column {
                 Text(text = it.name, style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = it.terms, fontSize = 8.sp)

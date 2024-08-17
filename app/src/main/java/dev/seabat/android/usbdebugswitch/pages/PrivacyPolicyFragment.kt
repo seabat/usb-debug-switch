@@ -19,7 +19,7 @@ class PrivacyPolicyFragment : Fragment() {
     ): View {
         val view = ComposeView(requireContext()).apply {
             setContent {
-                PrivacyPolicyScreen() {
+                PrivacyPolicyScreen {
                     lifecycleScope.launch {
                         findNavController().popBackStack()
                     }

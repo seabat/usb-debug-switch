@@ -2,7 +2,6 @@ package dev.seabat.android.usbdebugswitch.dialog
 
 import android.app.AlertDialog
 import android.app.Dialog
-
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 
@@ -14,7 +13,7 @@ class PermissionWarningDialog : DialogFragment() {
 
         return AlertDialog.Builder(activity)
             .setMessage(message)
-            .setPositiveButton("OK") { dialog, which ->
+            .setPositiveButton("OK") { _, _ ->
                 parentFragmentManager.setFragmentResult(
                     requestCode,
                     Bundle()
@@ -37,13 +36,12 @@ class PermissionWarningDialog : DialogFragment() {
 
         // methods
 
-        fun newInstance(message: String, requestCode: String): PermissionWarningDialog {
-            return PermissionWarningDialog().also { dialog ->
+        fun newInstance(message: String, requestCode: String): PermissionWarningDialog =
+            PermissionWarningDialog().also { dialog ->
                 dialog.arguments = Bundle().also { bundle ->
                     bundle.putString(ARG_MESSAGE, message)
                     bundle.putString(ARG_REQUEST_CODE, requestCode)
                 }
             }
-        }
     }
 }

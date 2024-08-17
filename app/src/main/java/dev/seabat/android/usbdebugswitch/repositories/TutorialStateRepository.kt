@@ -5,9 +5,7 @@ import androidx.preference.PreferenceManager
 import dev.seabat.android.usbdebugswitch.MainApplication
 import dev.seabat.android.usbdebugswitch.constants.TutorialStateType
 
-class TutorialStateRepository(
-    private val context: Context = MainApplication.instance
-) {
+class TutorialStateRepository(private val context: Context = MainApplication.instance) {
 
     /**
      * チュートリアルの表示済み状態を読み込む
@@ -29,7 +27,7 @@ class TutorialStateRepository(
      */
     fun save(state: TutorialStateType) {
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-        sharedPref.edit().let {editor ->
+        sharedPref.edit().let { editor ->
             editor.putString("pref_tutorial", state.key)
             editor.commit() // commit を忘れずに！
         }

@@ -16,12 +16,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import dev.seabat.android.usbdebugswitch.BuildConfig
 import dev.seabat.android.usbdebugswitch.R
 import dev.seabat.android.usbdebugswitch.compose.home.HomeScreen
 import dev.seabat.android.usbdebugswitch.constants.InternetStateType
@@ -44,11 +42,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class HomeFragment : Fragment(){
+class HomeFragment : Fragment() {
 
     companion object {
-        const val TAG = "MainActivity"
-        private val DEBUG = BuildConfig.DEBUG
         const val TAG_GOTO_OVERLAY_SETTING = "TAG_GOTO_OVERLAY_SETTING"
         const val TAG_GOTO_APP_SETTING = "TAG_GOTO_APP_SETTING"
         const val ACTION_SWITCH_OVERLAY_STATUS = "ACTION_SWITCH_OVERLAY_STATUS"
@@ -62,17 +58,17 @@ class HomeFragment : Fragment(){
     private lateinit var mOverlayStatusReceiver: BroadcastReceiver
     private lateinit var mWifiStateReceiver: BroadcastReceiver
 
-    enum class SetupStatusType(val order: Int) {
-        READY(0),
-        INTERNET_VIEW(1),
-        OVERLAY_VIEW(2),
-        USB_DEBUG_VIEW(3), // オーバーレイ表示領域のセットアップ
-        NOTIFICATION_PERMISSION(4),
-        OVERLAY_RECEIVER(5),
-        OVERLAY_PERMISSION(6),
-        OVERLAY_SERVICE(7), // 通知パーミッションのセットアップ
-        WIFI_STATE_RECEIVER(8),
-        FINISH(9),
+    enum class SetupStatusType {
+        READY,
+        INTERNET_VIEW,
+        OVERLAY_VIEW,
+        USB_DEBUG_VIEW, // オーバーレイ表示領域のセットアップ
+        NOTIFICATION_PERMISSION,
+        OVERLAY_RECEIVER,
+        OVERLAY_PERMISSION,
+        OVERLAY_SERVICE, // 通知パーミッションのセットアップ
+        WIFI_STATE_RECEIVER,
+        FINISH
     }
 
     private var setupStatus = SetupStatusType.READY
@@ -142,7 +138,10 @@ class HomeFragment : Fragment(){
                         }
                     },
                     onInternetSwitch = {
-                        InternetStateRepository().setEnabled(it == InternetStateType.ON, requireActivity())
+                        InternetStateRepository().setEnabled(
+                            it == InternetStateType.ON,
+                            requireActivity()
+                        )
                     },
                     onToggleSetting = {
                         sendOverlayTypeToOverlayService(it)
@@ -194,7 +193,8 @@ class HomeFragment : Fragment(){
         // 設定->アプリ->歯車アイコン->他のアプリの上に重ねて表示
         val intent = Intent(
             Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-            Uri.parse("package:${requireContext().packageName}"))
+            Uri.parse("package:${requireContext().packageName}")
+        )
         startActivity(intent)
 
         appOpsManager = requireContext().getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
@@ -203,7 +203,7 @@ class HomeFragment : Fragment(){
             requireContext().packageName,
             object : AppOpsManager.OnOpChangedListener {
                 override fun onOpChanged(op: String?, packageName: String?) {
-                    appOpsManager?.stopWatchingMode(this)    //監視を止める
+                    appOpsManager?.stopWatchingMode(this) // 監視を止める
                     CheckOverlayPermission(requireContext())(
                         enabled = { proceedSetup(next = SetupStatusType.OVERLAY_SERVICE) },
                         disabled = { proceedSetup(next = SetupStatusType.WIFI_STATE_RECEIVER) }
@@ -230,7 +230,7 @@ class HomeFragment : Fragment(){
     private fun proceedSetup(next: SetupStatusType) {
         this.setupStatus = next
         Log.i("UsbDebugSwitch", "Setup status: $next")
-        when(setupStatus) {
+        when (setupStatus) {
             SetupStatusType.READY -> {
                 // Do nothing
             }
@@ -251,7 +251,13 @@ class HomeFragment : Fragment(){
             }
             SetupStatusType.NOTIFICATION_PERMISSION -> {
                 lifecycleScope.launch {
-                    requestNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        requestNotificationPermissionLauncher.launch(
+                            android.Manifest.permission.POST_NOTIFICATIONS
+                        )
+                    } else {
+                        proceedSetup(next = SetupStatusType.OVERLAY_RECEIVER)
+                    }
                 }
             }
             SetupStatusType.OVERLAY_RECEIVER -> {
@@ -294,7 +300,10 @@ class HomeFragment : Fragment(){
                 disabled = {
                     // オーバーレイ権限がない場合、ダイアログを表示
                     PermissionWarningDialog
-                        .newInstance(getString(R.string.dialog_msg_goto_overlay_setting), TAG_GOTO_OVERLAY_SETTING)
+                        .newInstance(
+                            getString(R.string.dialog_msg_goto_overlay_setting),
+                            TAG_GOTO_OVERLAY_SETTING
+                        )
                         .show(parentFragmentManager, TAG_GOTO_OVERLAY_SETTING)
                 }
             )
@@ -309,7 +318,10 @@ class HomeFragment : Fragment(){
     private fun startOverlayService() {
         requireContext().startService(
             Intent(requireContext(), OverlayService::class.java).apply {
-                putExtra(OverlayService.INTENT_ITEM_SELECTED_OVERLAY, selectSettingStateFlow.value.key)
+                putExtra(
+                    OverlayService.INTENT_ITEM_SELECTED_OVERLAY,
+                    selectSettingStateFlow.value.key
+                )
             }
         )
         proceedSetup(next = SetupStatusType.WIFI_STATE_RECEIVER)
@@ -318,13 +330,13 @@ class HomeFragment : Fragment(){
     /**
      * OverlayService の開始を試みる
      */
-    private fun tryToStartOverlayService(){
+    private fun tryToStartOverlayService() {
         // 通知パーミッションをチェック
         CheckNotificationPermission(requireContext())(
             enabled = {
                 // オーバーレイ権限をチェック
                 CheckOverlayPermission(requireContext())(
-                    enabled ={
+                    enabled = {
                         // オーバーレイサービスを開始
                         val intent = Intent(requireContext(), OverlayService::class.java)
                         requireContext().startService(intent)
@@ -332,7 +344,10 @@ class HomeFragment : Fragment(){
                     disabled = {
                         // オーバーレイ権限がない場合、ダイアログを表示
                         PermissionWarningDialog
-                            .newInstance(getString(R.string.dialog_msg_goto_overlay_setting), TAG_GOTO_OVERLAY_SETTING)
+                            .newInstance(
+                                getString(R.string.dialog_msg_goto_overlay_setting),
+                                TAG_GOTO_OVERLAY_SETTING
+                            )
                             .show(parentFragmentManager, TAG_GOTO_OVERLAY_SETTING)
                     }
                 )
@@ -340,7 +355,10 @@ class HomeFragment : Fragment(){
             disabled = {
                 // パーミッション警告ダイアログを表示
                 PermissionWarningDialog
-                    .newInstance(getString(R.string.notification_permission_dialog_message), TAG_GOTO_APP_SETTING)
+                    .newInstance(
+                        getString(R.string.notification_permission_dialog_message),
+                        TAG_GOTO_APP_SETTING
+                    )
                     .show(parentFragmentManager, TAG_GOTO_APP_SETTING)
             }
         )
@@ -369,7 +387,7 @@ class HomeFragment : Fragment(){
      * オーバーレイ設定表示を初期化
      */
     private fun setupOverlayView() {
-        _overlayStateFlow.update{ OverlayStateRepository().load() }
+        _overlayStateFlow.update { OverlayStateRepository().load() }
         _selectSettingStateFlow.update { SelectedOverlayRepository().load() }
         proceedSetup(SetupStatusType.USB_DEBUG_VIEW)
     }
@@ -409,14 +427,15 @@ class HomeFragment : Fragment(){
         proceedSetup(SetupStatusType.OVERLAY_VIEW)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O) // for RECEIVER_NOT_EXPORTED
     private fun registerReceiverForOverlayService() {
         mOverlayStatusReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 when (intent?.action) {
                     ACTION_SWITCH_OVERLAY_STATUS -> {
                         _overlayStateFlow.update {
-                            if(intent.getStringExtra(KEY_OVERLAY_STATUS) == OverlayStateType.ON.key) {
+                            if (intent.getStringExtra(KEY_OVERLAY_STATUS) ==
+                                OverlayStateType.ON.key
+                            ) {
                                 OverlayStateType.ON
                             } else {
                                 OverlayStateType.OFF
@@ -431,37 +450,51 @@ class HomeFragment : Fragment(){
                     ACTION_SWITCH_INTERNET -> {
                         InternetStateRepository().setEnabled(
                             intent.getBooleanExtra(KEY_INTERNET_STATUS, false),
-                           requireActivity()
+                            requireActivity()
                         )
                     }
-                    ACTION_LAUNCH_DEVELOPER_OPTIONS ->{
-                        DeveloperOptionsLauncher.startActivityForResult { intent ->
-                            developerOptionsLauncher.launch(intent)
+                    ACTION_LAUNCH_DEVELOPER_OPTIONS -> {
+                        DeveloperOptionsLauncher.startActivityForResult { resultIntent ->
+                            developerOptionsLauncher.launch(resultIntent)
                         }
                     }
                 }
             }
         }
-
-        requireContext().registerReceiver(
-            mOverlayStatusReceiver,
-            IntentFilter().apply {
-                addAction(ACTION_SWITCH_OVERLAY_STATUS)
-                addAction(ACTION_SWITCH_INTERNET)
-                addAction(ACTION_LAUNCH_DEVELOPER_OPTIONS)
-            },
-            Context.RECEIVER_NOT_EXPORTED
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireContext().registerReceiver(
+                mOverlayStatusReceiver,
+                IntentFilter().apply {
+                    addAction(ACTION_SWITCH_OVERLAY_STATUS)
+                    addAction(ACTION_SWITCH_INTERNET)
+                    addAction(ACTION_LAUNCH_DEVELOPER_OPTIONS)
+                },
+                Context.RECEIVER_NOT_EXPORTED
+            )
+        } else {
+            requireContext().registerReceiver(
+                mOverlayStatusReceiver,
+                IntentFilter().apply {
+                    addAction(ACTION_SWITCH_OVERLAY_STATUS)
+                    addAction(ACTION_SWITCH_INTERNET)
+                    addAction(ACTION_LAUNCH_DEVELOPER_OPTIONS)
+                }
+            )
+        }
 
         proceedSetup(SetupStatusType.OVERLAY_PERMISSION)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O) // for RECEIVER_NOT_EXPORTED
     private fun registerWifiStateReceiver() {
         mWifiStateReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (intent?.action == WifiManager.WIFI_STATE_CHANGED_ACTION) {
-                    when (intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, WifiManager.WIFI_STATE_UNKNOWN)) {
+                    when (
+                        intent.getIntExtra(
+                            WifiManager.EXTRA_WIFI_STATE,
+                            WifiManager.WIFI_STATE_UNKNOWN
+                        )
+                    ) {
                         WifiManager.WIFI_STATE_ENABLED -> {
                             _internetStateFlow.update { InternetStateType.ON }
                         }
@@ -479,16 +512,23 @@ class HomeFragment : Fragment(){
             }
         }
 
-        requireContext().registerReceiver(
-            mWifiStateReceiver,
-            IntentFilter().apply { addAction(WifiManager.WIFI_STATE_CHANGED_ACTION) },
-            Context.RECEIVER_NOT_EXPORTED
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireContext().registerReceiver(
+                mWifiStateReceiver,
+                IntentFilter().apply { addAction(WifiManager.WIFI_STATE_CHANGED_ACTION) },
+                Context.RECEIVER_NOT_EXPORTED
+            )
+        } else {
+            requireContext().registerReceiver(
+                mWifiStateReceiver,
+                IntentFilter().apply { addAction(WifiManager.WIFI_STATE_CHANGED_ACTION) }
+            )
+        }
 
         proceedSetup(SetupStatusType.FINISH)
     }
 
-    private fun unRegisterReceivers()  {
+    private fun unRegisterReceivers() {
         requireContext().unregisterReceiver(mOverlayStatusReceiver)
         requireContext().unregisterReceiver(mWifiStateReceiver)
     }

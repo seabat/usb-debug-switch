@@ -1,0 +1,28 @@
+root = true
+
+[*.{kt, kts}]
+ktlint_code_style = android_studio
+
+max_line_length = 100
+
+# For Jetpack Compose
+ktlint_function_naming_ignore_when_annotated_with=Composable
+
+# Trailing comma on call site
+ktlint_standard_trailing-comma-on-call-site = disabled
+
+# Trailing comma on declaration site
+ktlint_standard_trailing-comma = disabled
+
+ktlint_standard_no-empty-first-line-in-class-body = disabled
+
+# Final newline
+ktlint_standard_final-newline = disabled
+
+# Validates that the package name matches the regular expression [a-z][a-zA-Z\d]*(\.[a-z][a-zA-Z\d]*)*.
+ktlint_standard_package-name = disabled # "_"をパッケージ名に使用することを許可する
+
+# No empty ({}) class bodies
+ktlint_standard_no-empty-class-body = disabled
+
+ktlint_standard_function-signature=disabled

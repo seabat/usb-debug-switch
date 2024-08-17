@@ -22,7 +22,7 @@ fun SettingsContent(
         SettingsItem(
             painterResource(id = R.drawable.baseline_info_outline_30),
             stringResource(id = R.string.settings_version),
-            optionalText = "${BuildConfig.VERSION_NAME}"
+            optionalText = BuildConfig.VERSION_NAME
         )
         SettingsItem(
             painterResource(id = R.drawable.baseline_lock_outline_30),

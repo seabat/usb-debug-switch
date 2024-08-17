@@ -38,7 +38,6 @@ fun HorizontalPagerIndicator(
             .wrapContentSize()
             .height(selectedIndicatorSize + indicatorPadding * 2)
     ) {
-
         // draw an indicator for each page
         repeat(pageCount) { page ->
             // calculate color and size of the indicator
@@ -51,7 +50,8 @@ fun HorizontalPagerIndicator(
                     val offsetPercentage = 1f - pageOffset.coerceIn(0f, 1f)
 
                     val size =
-                        unselectedIndicatorSize + ((selectedIndicatorSize - unselectedIndicatorSize) * offsetPercentage)
+                        unselectedIndicatorSize +
+                            ((selectedIndicatorSize - unselectedIndicatorSize) * offsetPercentage)
 
                     indicatorColor.copy(
                         alpha = offsetPercentage

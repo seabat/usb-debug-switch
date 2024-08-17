@@ -5,10 +5,7 @@ import androidx.preference.PreferenceManager
 import dev.seabat.android.usbdebugswitch.MainApplication
 import dev.seabat.android.usbdebugswitch.constants.OverlayStateType
 
-class OverlayStateRepository(
-    private val context: Context = MainApplication.instance
-) {
-
+class OverlayStateRepository(private val context: Context = MainApplication.instance) {
 
     /**
      * オーバーレイON/OFF状態を読み込む
@@ -27,7 +24,7 @@ class OverlayStateRepository(
 
     fun save(onOff: OverlayStateType) {
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-        sharedPref.edit().let {editor ->
+        sharedPref.edit().let { editor ->
             editor.putString("pref_overlay_state", onOff.key)
             editor.commit() // commit を忘れずに！
         }
@@ -36,7 +33,5 @@ class OverlayStateRepository(
     /**
      * オーバーレイが有効か
      */
-    fun isEnabled(): Boolean {
-        return load() == OverlayStateType.ON
-    }
+    fun isEnabled(): Boolean = load() == OverlayStateType.ON
 }
