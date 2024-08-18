@@ -56,6 +56,55 @@ class OverlayService : Service() {
         setUpUsbDebugStatusReceiver()
     }
 
+    override fun onBind(intent: Intent): IBinder? = null
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (ServiceStatusChecker.isServiceRunningInForeground(
+                getBaseContext(),
+                "OverlayService"
+            )
+        ) {
+            // 既に サービスがフォアグラウンドの場合は、startForeground() をコールしない。
+            // startForeground() のコール自体は何回コールしても問題ないが、
+            // notification への通知がその度に発生するのでUI的にうざいので、
+            // 通知はフォアグラウンドに移行する際の一回でよい。
+            return START_NOT_STICKY
+        }
+
+        doStartForeground {
+            overlay()
+            OverlayStateRepository().save(OverlayStateType.ON)
+            sendOverlayStatusToActivity()
+        }
+
+        return START_NOT_STICKY
+    }
+
+    override fun onDestroy() {
+        // オーバーレイを finalize
+        mOverlay?.run {
+            remove()
+            mOverlay = null
+        }
+
+        // サービスを停止
+        doStopForeground {
+            OverlayStateRepository().save(OverlayStateType.OFF)
+            sendOverlayStatusToActivity()
+        }
+
+        // ブロードキャストレシーバーの finalize
+        finalizeReceiver()
+
+        // タイマーを finalize
+        mRunnable?.run {
+            mHandler.removeCallbacks(mRunnable!!)
+            mRunnable = null
+        }
+
+        super.onDestroy()
+    }
+
     private fun setUpUsbDebugStatusReceiver() {
         mReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -101,30 +150,6 @@ class OverlayService : Service() {
                 }
             )
         }
-    }
-
-    override fun onBind(intent: Intent): IBinder? = null
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (ServiceStatusChecker.isServiceRunningInForeground(
-                getBaseContext(),
-                "OverlayService"
-            )
-        ) {
-            // 既に サービスがフォアグラウンドの場合は、startForeground() をコールしない。
-            // startForeground() のコール自体は何回コールしても問題ないが、
-            // notification への通知がその度に発生するのでUI的にうざいので、
-            // 通知はフォアグラウンドに移行する際の一回でよい。
-            return START_NOT_STICKY
-        }
-
-        doStartForeground {
-            overlay()
-            OverlayStateRepository().save(OverlayStateType.ON)
-            sendOverlayStatusToActivity()
-        }
-
-        return START_NOT_STICKY
     }
 
     private fun overlay() {
@@ -260,31 +285,6 @@ class OverlayService : Service() {
             arrayOf(intent),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-    }
-
-    override fun onDestroy() {
-        // オーバーレイを finalize
-        mOverlay?.run {
-            remove()
-            mOverlay = null
-        }
-
-        // サービスを停止
-        doStopForeground {
-            OverlayStateRepository().save(OverlayStateType.OFF)
-            sendOverlayStatusToActivity()
-        }
-
-        // ブロードキャストレシーバーの finalize
-        finalizeReceiver()
-
-        // タイマーを finalize
-        mRunnable?.run {
-            mHandler.removeCallbacks(mRunnable!!)
-            mRunnable = null
-        }
-
-        super.onDestroy()
     }
 
     private fun finalizeReceiver() {
