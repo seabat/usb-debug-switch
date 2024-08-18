@@ -10,6 +10,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 import android.os.Handler
@@ -237,6 +238,13 @@ class OverlayService : Service() {
         onStartService()
     }
 
+    /**
+     * Android 8.0 以降の通知設定
+     *
+     * - NotificationChannel を使って通知チャンネルを作成
+     *
+     * @return
+     */
     private fun createNotificationVersion26(): Notification {
         NotificationChannel(
             CHANNEL_ID,
@@ -251,15 +259,25 @@ class OverlayService : Service() {
                 .createNotificationChannel(it)
         }
 
+        val largeIcon = BitmapFactory.decodeResource(
+            resources,
+            if (SelectedOverlayRepository().load().key == SelectedOverlayType.USB_DEBUG.key) {
+                R.mipmap.ic_on
+            } else {
+                R.mipmap.ic_online
+            }
+        )
+
         return Notification.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.mipmap.ic_stat_adb)
             // 通知は 24 dp のアイコンをセットする。
             // アイコンカラーはモノクロになるので、ランチャーアイコンのような画像は向いていない。
+            .setSmallIcon(R.mipmap.ic_stat_adb)
+            .setLargeIcon(largeIcon)
             .setContentTitle(getString(R.string.notification_overlay_title))
-//                      .setContentText("SubjectSubject")
             // ２行目の文字列設定。いらない。
-//                      .setAutoCancel()
+//          .setContentText("SubjectSubject")
             // ユーザーがクリックで通知を削除できる。いらない。
+//          .setAutoCancel()
             .setContentIntent(createPendingIntent())
             .build()
     }
