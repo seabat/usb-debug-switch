@@ -1,5 +1,6 @@
 package dev.seabat.android.usbdebugswitch.pages
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.app.AppOpsManager
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -73,19 +74,23 @@ class HomeFragment : Fragment() {
 
     private var setupStatus = SetupStatusType.READY
 
-    private val requestNotificationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
+    private val requestMultiplePermissionsLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
     ) { granted ->
-        if (granted) {
-            proceedSetup(next = SetupStatusType.OVERLAY_RECEIVER)
-        } else {
+        if (granted[POST_NOTIFICATIONS] != true) {
             Toast.makeText(
                 requireActivity(),
                 "Please grant Post Notification Permission",
                 Toast.LENGTH_SHORT
             )
         }
+        if (granted[POST_NOTIFICATIONS] == true) {
+            proceedSetup(next = SetupStatusType.OVERLAY_RECEIVER)
+        } else {
+            proceedSetup(next = SetupStatusType.WIFI_STATE_RECEIVER)
+        }
     }
+
     private val developerOptionsLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { _ ->
@@ -205,8 +210,12 @@ class HomeFragment : Fragment() {
                 override fun onOpChanged(op: String?, packageName: String?) {
                     appOpsManager?.stopWatchingMode(this) // 監視を止める
                     CheckOverlayPermission(requireContext())(
-                        enabled = { proceedSetup(next = SetupStatusType.OVERLAY_SERVICE) },
-                        disabled = { proceedSetup(next = SetupStatusType.WIFI_STATE_RECEIVER) }
+                        enabled = {
+                            proceedSetup(next = SetupStatusType.OVERLAY_SERVICE)
+                        },
+                        disabled = {
+                            proceedSetup(next = SetupStatusType.WIFI_STATE_RECEIVER)
+                        }
                     )
                 }
             }
@@ -215,6 +224,7 @@ class HomeFragment : Fragment() {
 
     /**
      * 設定アプリの Usb Debug Switch 設定画面を起動する
+     *
      */
     private fun launchAppSetting() {
         val intent = Intent().apply {
@@ -252,9 +262,7 @@ class HomeFragment : Fragment() {
             SetupStatusType.NOTIFICATION_PERMISSION -> {
                 lifecycleScope.launch {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        requestNotificationPermissionLauncher.launch(
-                            android.Manifest.permission.POST_NOTIFICATIONS
-                        )
+                        requestMultiplePermissionsLauncher.launch(arrayOf(POST_NOTIFICATIONS))
                     } else {
                         proceedSetup(next = SetupStatusType.OVERLAY_RECEIVER)
                     }
@@ -287,7 +295,7 @@ class HomeFragment : Fragment() {
     }
 
     /**
-     * オーバーレイ preference を初期化する
+     * 必要であればオーバーレイ権限を付与を試みる
      *
      * Preference に "ON" が格納されている場合は、オーバーレイサービスの開始を試みる。
      */
@@ -338,8 +346,9 @@ class HomeFragment : Fragment() {
                 CheckOverlayPermission(requireContext())(
                     enabled = {
                         // オーバーレイサービスを開始
-                        val intent = Intent(requireContext(), OverlayService::class.java)
-                        requireContext().startService(intent)
+                        requireContext().startService(
+                            Intent(requireContext(), OverlayService::class.java)
+                        )
                     },
                     disabled = {
                         // オーバーレイ権限がない場合、ダイアログを表示
@@ -461,6 +470,7 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requireContext().registerReceiver(
                 mOverlayStatusReceiver,
@@ -469,7 +479,7 @@ class HomeFragment : Fragment() {
                     addAction(ACTION_SWITCH_INTERNET)
                     addAction(ACTION_LAUNCH_DEVELOPER_OPTIONS)
                 },
-                Context.RECEIVER_NOT_EXPORTED
+                Context.RECEIVER_EXPORTED
             )
         } else {
             requireContext().registerReceiver(

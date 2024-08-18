@@ -9,11 +9,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SHORT_SERVICE
 import android.graphics.Color
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
-import androidx.annotation.RequiresApi
 import dev.seabat.android.usbdebugswitch.MainActivity
 import dev.seabat.android.usbdebugswitch.R
 import dev.seabat.android.usbdebugswitch.constants.OverlayStateType
@@ -56,7 +56,6 @@ class OverlayService : Service() {
         setUpUsbDebugStatusReceiver()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O) // for RECEIVER_NOT_EXPORTED
     private fun setUpUsbDebugStatusReceiver() {
         mReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -82,15 +81,26 @@ class OverlayService : Service() {
                 }
             }
         }
-        baseContext?.registerReceiver(
-            mReceiver,
-            IntentFilter().apply {
-                addAction(ACTION_SWITCH_INTERNET_STATUS)
-                addAction(ACTION_SWITCH_USB_DEBUG_STATUS)
-                addAction(ACTION_SELECT_OVERLAY_SETTING)
-            },
-            RECEIVER_NOT_EXPORTED
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            baseContext?.registerReceiver(
+                mReceiver,
+                IntentFilter().apply {
+                    addAction(ACTION_SWITCH_INTERNET_STATUS)
+                    addAction(ACTION_SWITCH_USB_DEBUG_STATUS)
+                    addAction(ACTION_SELECT_OVERLAY_SETTING)
+                },
+                RECEIVER_EXPORTED
+            )
+        } else {
+            baseContext?.registerReceiver(
+                mReceiver,
+                IntentFilter().apply {
+                    addAction(ACTION_SWITCH_INTERNET_STATUS)
+                    addAction(ACTION_SWITCH_USB_DEBUG_STATUS)
+                    addAction(ACTION_SELECT_OVERLAY_SETTING)
+                }
+            )
+        }
     }
 
     override fun onBind(intent: Intent): IBinder? = null
@@ -175,12 +185,33 @@ class OverlayService : Service() {
                 null
             }
 
-        startForeground(NOTIFICATION_ID, notification)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            notification?.let {
+                startForeground(
+                    NOTIFICATION_ID,
+                    notification,
+                    FOREGROUND_SERVICE_TYPE_SHORT_SERVICE
+                )
+            } ?: run {
+                throw IllegalStateException("Notification is null")
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            notification?.let {
+                startForeground(
+                    NOTIFICATION_ID,
+                    notification,
+                    0 // Android 13 では 0 を指定
+                )
+            } ?: run {
+                throw IllegalStateException("Notification is null")
+            }
+        } else {
+            startForeground(NOTIFICATION_ID, notification)
+        }
 
         onStartService()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationVersion26(): Notification {
         NotificationChannel(
             CHANNEL_ID,
