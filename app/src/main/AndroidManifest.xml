@@ -3,6 +3,7 @@
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -19,8 +20,10 @@
         <service
                 android:name=".services.OverlayService"
                 android:enabled="true"
-                android:foregroundServiceType="shortService"
+                android:foregroundServiceType="specialUse"
                 android:exported="false">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Starting a foreground service is necessary to keep a switch icon for toggling USB debugging ON and OFF constantly displayed on the device."/>
         </service>
 
         <activity

@@ -9,7 +9,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SHORT_SERVICE
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
 import android.graphics.Color
 import android.os.Build
 import android.os.Handler
@@ -215,7 +215,7 @@ class OverlayService : Service() {
                 startForeground(
                     NOTIFICATION_ID,
                     notification,
-                    FOREGROUND_SERVICE_TYPE_SHORT_SERVICE
+                    FOREGROUND_SERVICE_TYPE_SPECIAL_USE
                 )
             } ?: run {
                 throw IllegalStateException("Notification is null")
