@@ -52,9 +52,10 @@ fun TutorialContent(
             modifier = Modifier.align(Alignment.TopCenter),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val pagerState = rememberPagerState()
+            val pagerState = rememberPagerState {
+                bitmaps.size
+            }
             HorizontalPager(
-                pageCount = bitmaps.size,
                 beyondBoundsPageCount = bitmaps.size,
                 state = pagerState,
                 contentPadding = PaddingValues(
