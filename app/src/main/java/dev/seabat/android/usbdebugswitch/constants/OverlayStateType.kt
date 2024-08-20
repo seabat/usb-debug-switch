@@ -9,12 +9,10 @@ enum class OverlayStateType(val key: String) {
 
     companion object {
         fun fromKey(key: String) = try {
-            OverlayStateType.values().first { it.key == key }
-        } catch(e: NoSuchElementException) {
+            entries.first { it.key == key }
+        } catch (e: NoSuchElementException) {
             OFF
         }
     }
-    fun isOn(): Boolean {
-        return key== ON.key
-    }
+    fun isOn(): Boolean = key == ON.key
 }

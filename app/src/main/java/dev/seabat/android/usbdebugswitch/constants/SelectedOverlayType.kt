@@ -9,8 +9,8 @@ enum class SelectedOverlayType(val key: String) {
 
     companion object {
         fun fromKey(key: String) = try {
-            SelectedOverlayType.values().first { it.key == key }
-        } catch(e: NoSuchElementException) {
+            entries.first { it.key == key }
+        } catch (e: NoSuchElementException) {
             USB_DEBUG
         }
     }

@@ -97,7 +97,6 @@ fun HomeScreen(
     }
 }
 
-
 @Preview
 @Composable
 fun MainScreenPreview() {

@@ -1,8 +1,7 @@
 package usbdebugswitch.seabat.java_conf.gr.jp.usbdebugswitch
 
-import org.junit.Test
-
 import org.junit.Assert.*
+import org.junit.Test
 
 /**
  * Example local unit test, which will execute on the development machine (host).

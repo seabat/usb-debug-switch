@@ -7,10 +7,13 @@ import android.hardware.display.DisplayManager
 import android.os.Build
 import android.os.Handler
 import android.util.Log
-import android.view.*
-import android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+import android.view.Display
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.getSystemService
 import dev.seabat.android.usbdebugswitch.R
 import dev.seabat.android.usbdebugswitch.constants.SelectedOverlayType
@@ -19,9 +22,7 @@ import dev.seabat.android.usbdebugswitch.repositories.SelectedOverlayRepository
 import dev.seabat.android.usbdebugswitch.services.OverlayService
 import dev.seabat.android.usbdebugswitch.utils.UsbDebugStatusChecker
 
-
 class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchListener) {
-
 
     private val mOverlayView: ViewGroup
 
@@ -101,7 +102,7 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchL
             if (!mIsLongClick) {
                 imageView.visibility = View.INVISIBLE
                 Handler().postDelayed({ imageView.visibility = View.VISIBLE }, 500L)
-                when(SelectedOverlayRepository().load()) {
+                when (SelectedOverlayRepository().load()) {
                     SelectedOverlayType.USB_DEBUG -> {
                         mListener.onUsbDebugSwitch()
                     }
@@ -119,7 +120,7 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchL
         }
 
         mOverlayView.setOnTouchListener { view, motionEvent ->
-            //タップした位置
+            // タップした位置
             val x = motionEvent.rawX.toInt()
             val y = motionEvent.rawY.toInt()
 
@@ -133,7 +134,9 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchL
 
                         Log.d(
                             TAG,
-                            "tapX:" + x + " tapY:" + y + " fromCenterX:" + centerX + " fromCenterY:" + centerY)
+                            "tapX:" + x + " tapY:" + y + " fromCenterX:" + centerX +
+                                " fromCenterY:" + centerY
+                        )
 
                         // 微調整
                         centerY -= 80
@@ -161,13 +164,12 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchL
         }
     }
 
-
     /**
      * ImageView に USBデバッグ設定の状態を表現する画像をセットする
      */
     private fun registerImage() {
         val imageView = mOverlayView.findViewById(R.id.debug_onoff_image) as ImageView
-        when(SelectedOverlayRepository().load()) {
+        when (SelectedOverlayRepository().load()) {
             SelectedOverlayType.USB_DEBUG -> {
                 if (UsbDebugStatusChecker.isUsbDebugEnabled(mContext)) {
                     imageView.setImageResource(R.mipmap.ic_on)
@@ -185,7 +187,6 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchL
         }
     }
 
-
     private fun createLayoutParams(): WindowManager.LayoutParams {
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
@@ -196,14 +197,13 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchL
                 WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
             },
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+                WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
             PixelFormat.TRANSLUCENT
         )
 
         return params
     }
-
 
     /**
      * オーバーレイで表示する画像をリセットする
@@ -211,7 +211,6 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchL
     fun resetImage() {
         registerImage()
     }
-
 
     fun remove() {
         // サービスが破棄されるときには重ね合わせしていたViewを削除する

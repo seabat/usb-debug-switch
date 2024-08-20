@@ -18,7 +18,6 @@ object DeveloperOptionsLauncher {
         }
     }
 
-
     /**
      * Activity ではないところから設定アプリの「開発者向けオプション」画面を起動する
      */
@@ -33,7 +32,8 @@ object DeveloperOptionsLauncher {
                 intent.setComponent(
                     ComponentName(
                         "com.android.settings",
-                        "com.android.settings.DevelopmentSettings")
+                        "com.android.settings.DevelopmentSettings"
+                    )
                 )
                 intent.setAction("android.intent.action.View")
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)

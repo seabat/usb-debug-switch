@@ -8,18 +8,15 @@ import android.os.Build
 import android.provider.Settings
 import dev.seabat.android.usbdebugswitch.MainApplication
 
-
-class InternetStateRepository(
-    private val context: Context = MainApplication.instance
-) {
+class InternetStateRepository(private val context: Context = MainApplication.instance) {
     fun isEnabled(): Boolean {
         val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
         return wifiManager.isWifiEnabled
     }
 
-   fun setEnabled(enable: Boolean, activity: Activity) {
+    fun setEnabled(enable: Boolean, activity: Activity) {
         setWifiEnabled(enable, activity)
-   }
+    }
 
     private fun setWifiEnabled(enable: Boolean, activity: Activity) {
         val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager

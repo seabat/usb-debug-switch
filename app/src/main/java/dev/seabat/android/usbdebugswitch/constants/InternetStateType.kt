@@ -6,8 +6,8 @@ enum class InternetStateType(val key: String) {
 
     companion object {
         fun fromKey(key: String) = try {
-            InternetStateType.values().first { it.key == key }
-        } catch(e: NoSuchElementException) {
+            entries.first { it.key == key }
+        } catch (e: NoSuchElementException) {
             OFF
         }
     }

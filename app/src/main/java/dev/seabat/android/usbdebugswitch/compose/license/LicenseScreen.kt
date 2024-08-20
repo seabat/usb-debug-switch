@@ -24,13 +24,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.seabat.android.usbdebugswitch.R
 import dev.seabat.android.usbdebugswitch.compose.LoadingComponent
-import dev.seabat.android.usbdebugswitch.utils.LibraryLicense
+import dev.seabat.android.usbdebugswitch.utils.LibraryLicenseList
 import kotlinx.coroutines.flow.StateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LicenseScreen(
-    licensesStateFlow: StateFlow<List<LibraryLicense>>,
+    licensesStateFlow: StateFlow<LibraryLicenseList>,
     licenseLoadedStateFlow: StateFlow<Boolean>,
     goBack: () -> Unit
 ) {
