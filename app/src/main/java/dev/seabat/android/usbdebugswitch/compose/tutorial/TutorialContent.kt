@@ -56,7 +56,6 @@ fun TutorialContent(
                 bitmaps.size
             }
             HorizontalPager(
-                beyondBoundsPageCount = bitmaps.size,
                 state = pagerState,
                 contentPadding = PaddingValues(
 //                horizontal = 32.dp,

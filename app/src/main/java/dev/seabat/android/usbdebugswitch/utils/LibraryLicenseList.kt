@@ -22,7 +22,7 @@ data class LibraryLicenseList(val licenseList: List<LibraryLicense>) :
             Dispatchers.IO
         ) {
             val inputSteam = context.resources.openRawResource(
-                R.raw.third_party_license_metadata
+                R.raw.third_party_license_metadata_z
             )
             inputSteam.use { stream ->
                 val reader = BufferedReader(InputStreamReader(stream, "UTF-8"))
@@ -43,7 +43,7 @@ data class LibraryLicenseList(val licenseList: List<LibraryLicense>) :
             Log.d("LicenseList", "${library.name} ${library.offset} ${library.length}")
             return withContext(Dispatchers.IO) {
                 val charArray = CharArray(library.length)
-                val inputStream = context.resources.openRawResource(R.raw.third_party_licenses)
+                val inputStream = context.resources.openRawResource(R.raw.third_party_licenses_z)
                 inputStream.use { stream ->
                     val bufferedReader = BufferedReader(InputStreamReader(stream, "UTF-8"))
                     bufferedReader.use { reader ->

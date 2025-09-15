@@ -9,13 +9,13 @@ plugins {
 }
 
 android {
-    compileSdk = 34
+    compileSdk = 36
     namespace = "dev.seabat.android.usbdebugswitch"
 
     defaultConfig {
         applicationId = "dev.seabat.android.usbdebugswitch"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 9
         versionName = "1.2.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
