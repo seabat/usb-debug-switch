@@ -4,6 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -61,14 +63,22 @@ fun LicenseScreen(
                 )
             }
         ) { contentPadding ->
-            LicenseContent(
-                modifier = Modifier
-                    .padding(contentPadding)
-                    .fillMaxSize()
-                    .background(color = Color(0xFFF2F0F4))
-                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                licensesStateFlow = licensesStateFlow,
-            )
+            Box {
+                // 背景用の Composable 関数
+                Column(
+                    modifier = Modifier.fillMaxSize().background(color = Color(0xFFF2F0F4))
+                ) {}
+
+                // contentPadding を考慮した本体コンテンツ
+                LicenseContent(
+                    modifier = Modifier
+                        .padding(contentPadding)
+                        .fillMaxSize()
+                        .background(color = Color(0xFFF2F0F4))
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                    licensesStateFlow = licensesStateFlow,
+                )
+            }
         }
     } else {
         LoadingComponent()
