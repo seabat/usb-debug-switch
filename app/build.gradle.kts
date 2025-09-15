@@ -64,9 +64,6 @@ dependencies {
     // navigation
     implementation("androidx.navigation:navigation-fragment-ktx:2.9.4")
 
-    // oss license
-    implementation("com.google.android.gms:play-services-oss-licenses:17.3.0")
-
     // compose
     val composeBom = platform("androidx.compose:compose-bom:2024.09.00")
     implementation(composeBom)
