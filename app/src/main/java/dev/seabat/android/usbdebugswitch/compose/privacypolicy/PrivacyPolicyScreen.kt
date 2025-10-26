@@ -2,10 +2,13 @@ package dev.seabat.android.usbdebugswitch.compose.privacypolicy
 
 import android.webkit.WebViewClient
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -53,8 +56,16 @@ fun PrivacyPolicyScreen(
             )
         }
     ) { contentPadding ->
-        Box(modifier = Modifier.padding(contentPadding)) {
-            WebViewInCompose()
+        Box {
+            // 背景用の Composable 関数
+            Column(
+                modifier = Modifier.fillMaxSize().background(color = Color(0xFFF2F0F4))
+            ) {}
+
+            // contentPadding を考慮した本体コンテンツ
+            Box(modifier = Modifier.padding(contentPadding)) {
+                WebViewInCompose()
+            }
         }
     }
 }

@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -59,16 +61,24 @@ fun TutorialScreen(
                 )
             }
         ) { contentPadding ->
-            TutorialContent(
-                modifier = Modifier
-                    .padding(contentPadding)
-                    .fillMaxSize()
-                    .background(color = Color(0xFFF2F0F4))
-                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                    .verticalScroll(rememberScrollState()),
-                bitmaps,
-                onClose
-            )
+            Box {
+                // 背景用の Composable 関数
+                Column(
+                    modifier = Modifier.fillMaxSize().background(color = Color(0xFFF2F0F4))
+                ) {}
+
+                // contentPadding を考慮した本体コンテンツ
+                TutorialContent(
+                    modifier = Modifier
+                        .padding(contentPadding)
+                        .fillMaxSize()
+                        .background(color = Color(0xFFF2F0F4))
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        .verticalScroll(rememberScrollState()),
+                    bitmaps,
+                    onClose
+                )
+            }
         }
     } else {
         LoadingComponent()
