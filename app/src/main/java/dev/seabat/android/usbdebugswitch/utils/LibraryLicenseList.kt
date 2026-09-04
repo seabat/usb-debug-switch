@@ -1,7 +1,6 @@
 package dev.seabat.android.usbdebugswitch.utils
 
 import android.content.Context
-import android.util.Log
 import dev.seabat.android.usbdebugswitch.R
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -40,7 +39,7 @@ data class LibraryLicenseList(val licenseList: List<LibraryLicense>) :
         }
 
         private suspend fun loadLicense(context: Context, library: Library): String {
-            Log.d("LicenseList", "${library.name} ${library.offset} ${library.length}")
+            Logger.d("LicenseList", "${library.name} ${library.offset} ${library.length}")
             return withContext(Dispatchers.IO) {
                 val charArray = CharArray(library.length)
                 val inputStream = context.resources.openRawResource(R.raw.third_party_licenses_z)
