@@ -8,13 +8,12 @@ buildscript {
         google()
     }
     dependencies {
-        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.9.4")
-        classpath("com.google.android.gms:oss-licenses-plugin:0.10.7")
+        classpath(libs.androidx.navigation.safe.args.gradle.plugin)
+        classpath(libs.oss.licenses.plugin)
     }
 }
 
 plugins {
-    id("com.android.application") version "8.13.0" apply false
-    id("org.jetbrains.kotlin.android") version "2.2.20" apply false
-    id("org.jetbrains.kotlin.plugin.compose") version "2.2.20" apply false
+    id("com.android.application") version "9.3.2" apply false
+    id("org.jetbrains.kotlin.plugin.compose") version "2.4.10" apply false
 }

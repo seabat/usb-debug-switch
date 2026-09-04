@@ -11,7 +11,6 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +36,7 @@ import dev.seabat.android.usbdebugswitch.services.OverlayService
 import dev.seabat.android.usbdebugswitch.utils.CheckNotificationPermission
 import dev.seabat.android.usbdebugswitch.utils.CheckOverlayPermission
 import dev.seabat.android.usbdebugswitch.utils.DeveloperOptionsLauncher
+import dev.seabat.android.usbdebugswitch.utils.Logger
 import dev.seabat.android.usbdebugswitch.utils.UsbDebugStatusChecker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -239,7 +239,7 @@ class HomeFragment : Fragment() {
      */
     private fun proceedSetup(next: SetupStatusType) {
         this.setupStatus = next
-        Log.i("UsbDebugSwitch", "Setup status: $next")
+        Logger.i("UsbDebugSwitch", "Setup status: $next")
         when (setupStatus) {
             SetupStatusType.READY -> {
                 // Do nothing

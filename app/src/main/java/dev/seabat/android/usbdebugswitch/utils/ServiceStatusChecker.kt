@@ -2,12 +2,9 @@ package dev.seabat.android.usbdebugswitch.utils
 
 import android.app.ActivityManager
 import android.content.Context
-import android.util.Log
 
 object ServiceStatusChecker {
     // constants
-
-    private const val DEBUG = false
 
     private const val TAG = "ServiceStatusChecker"
 
@@ -16,7 +13,7 @@ object ServiceStatusChecker {
         for (service in manager.getRunningServices(Integer.MAX_VALUE)) {
             // getRunningServices() は Android O で depricated になったが、自サービスに対しては
             // 引き続き有効である。
-            if (DEBUG) Log.d(TAG, "isServiceRunningInForeground: " + service.service.className)
+            Logger.d(TAG, "isServiceRunningInForeground: " + service.service.className)
             if (service.service.className.contains(className)) {
                 if (service.foreground) {
                     return true
@@ -31,7 +28,7 @@ object ServiceStatusChecker {
         for (service in manager.getRunningServices(Integer.MAX_VALUE)) {
             // getRunningServices() は Android O で depricated になったが、自サービスに対しては
             // 引き続き有効である。
-            if (DEBUG) Log.d(TAG, "hasServiceRunning: " + service.service.className)
+            Logger.d(TAG, "hasServiceRunning: " + service.service.className)
             if (service.service.className.contains(className)) {
                 return true
             }
