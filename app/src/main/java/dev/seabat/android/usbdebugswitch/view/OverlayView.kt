@@ -151,16 +151,23 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchL
                         // 移動した分を更新する
                         windowManager.updateViewLayout(mOverlayView, mParams)
                     }
+                    false
                 }
                 // Viewの移動が終わったときに呼ばれる
                 MotionEvent.ACTION_UP -> {
                     if (mIsLongClick) {
                         Handler().postDelayed({ mIsLongClick = false }, 500L)
                         imageView.setAlpha(255)
+                        false
+                    } else {
+                        // クリック判定は performClick に委譲する。
+                        // ここで true を返してイベントを消費しないと、デフォルトのタッチ処理でも
+                        // performClick が呼ばれ、クリック処理が二重に実行されてしまう。
+                        view.performClick()
                     }
                 }
+                else -> false
             }
-            false
         }
     }
 
