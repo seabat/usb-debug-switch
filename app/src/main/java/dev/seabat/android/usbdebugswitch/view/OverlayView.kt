@@ -6,7 +6,6 @@ import android.graphics.Point
 import android.hardware.display.DisplayManager
 import android.os.Build
 import android.os.Handler
-import android.util.Log
 import android.view.Display
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -20,6 +19,7 @@ import dev.seabat.android.usbdebugswitch.constants.SelectedOverlayType
 import dev.seabat.android.usbdebugswitch.repositories.InternetStateRepository
 import dev.seabat.android.usbdebugswitch.repositories.SelectedOverlayRepository
 import dev.seabat.android.usbdebugswitch.services.OverlayService
+import dev.seabat.android.usbdebugswitch.utils.Logger
 import dev.seabat.android.usbdebugswitch.utils.UsbDebugStatusChecker
 
 class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchListener) {
@@ -58,7 +58,7 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchL
             val size = Point()
             display.getSize(size)
             displaySize = size
-            Log.d("XXX", "displaySize.x:" + displaySize.x + " displaySize.y:" + displaySize.y)
+            Logger.d(TAG, "displaySize.x:" + displaySize.x + " displaySize.y:" + displaySize.y)
             LayoutInflater.from(mContext)
         } else {
             val displayManager = mContext.getSystemService<DisplayManager>()
@@ -67,7 +67,7 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchL
             val screenWidth = displayContext.resources.displayMetrics.widthPixels
             val screenHeight = displayContext.resources.displayMetrics.heightPixels
             displaySize = Point(screenWidth, screenHeight)
-            Log.d("XXX", "displaySize.x:" + displaySize.x + " displaySize.y:" + displaySize.y)
+            Logger.d(TAG, "displaySize.x:" + displaySize.x + " displaySize.y:" + displaySize.y)
             LayoutInflater.from(displayContext)
         }
 
@@ -87,7 +87,7 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchL
         this.windowManager.let { windowManager ->
             windowManager.addView(mOverlayView, mParams)
         }
-        Log.d(TAG, "mParams.x:" + mParams.x + " mParams.y:" + mParams.y)
+        Logger.d(TAG, "mParams.x:" + mParams.x + " mParams.y:" + mParams.y)
     }
 
     /**
@@ -132,7 +132,7 @@ class OverlayView(val mContext: Context, val mListener: OverlayService.OnSwitchL
                         val centerX = x - (displaySize.x / 2)
                         var centerY = y - (displaySize.y / 2)
 
-                        Log.d(
+                        Logger.d(
                             TAG,
                             "tapX:" + x + " tapY:" + y + " fromCenterX:" + centerX +
                                 " fromCenterY:" + centerY
